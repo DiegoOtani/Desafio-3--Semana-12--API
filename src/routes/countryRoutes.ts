@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { registerCountry, getAllCountries } from "../controllers/countryController";
+import { registerCountry, getAllCountries, updateCountry } from "../controllers/countryController";
 
 const router = Router();
 
 router.get('/', getAllCountries);
 router.post('/', registerCountry);
+router.put('/:id', updateCountry);
 
 export default router;
