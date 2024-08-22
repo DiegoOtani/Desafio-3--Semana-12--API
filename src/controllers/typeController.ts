@@ -47,4 +47,4 @@ export const deleteType = async(req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error deleting type' });
   }
-}
+};
