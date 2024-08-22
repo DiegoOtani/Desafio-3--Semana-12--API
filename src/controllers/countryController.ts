@@ -37,6 +37,8 @@ export const updateCountry = async(req: Request, res: Response) => {
     if(continent) updates.continent = continent;
     if(urlImg) updates.urlImg = urlImg;
 
+    if(Object.keys(updates).length === 0) return res.status(400).json({ error: "No fields provided for update" });
+
     const updatedCountry = await updateCountryById(id, updates);
     return updatedCountry.error
       ? res.status(400).json({ country: null, error: updatedCountry.error })
