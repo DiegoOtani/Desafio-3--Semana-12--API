@@ -27,7 +27,8 @@ export const getAllTypes = async(req: Request, res: Response) => {
 
 export const updateType = async(req: Request, res: Response) => {
   try {
-    const { id, name } = req.body;
+    const { id } = req.params;
+    const { name } = req.body;
     const updatedType = await updateTypeById({id, name});
     return updatedType.error 
       ? res.status(400).json({ type: null, error: updatedType.error })
@@ -39,7 +40,7 @@ export const updateType = async(req: Request, res: Response) => {
 
 export const deleteType = async(req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const deletedType = await deleteTypeById(id);
     return deletedType.error 
       ? res.status(400).json({ type: null, error: deletedType.error })
