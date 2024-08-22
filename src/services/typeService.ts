@@ -11,17 +11,17 @@ export const typeExstsById = async(id: string) => {
   return await db.get(`SELECT * FROM Type WHERE id = ?`, [id]);
 };
 
-export const createType = async ({ id, name }: Type): Promise<{ id: string | null, error: string | null }> => {
+export const createType = async ({ id, name }: Type): Promise<{ type: Type | null, error: string | null }> => {
   const db = await openDb();
   
   const existsType = await typeExists(name);
-  if(existsType) return { id: null, error: 'Type already registered' };
+  if(existsType) return { type: null, error: 'Type already registered' };
 
   await db.run(`INSERT INTO Type(id, name) VALUES (?, ?)`, [id, name]);
   const createdType = await db.get('SELECT * FROM Type WHERE id = ?', [id]);
   return !createdType 
-    ? { id: null, error: 'Error creating type' }
-    : { id, error: null }
+    ? { type: null, error: 'Error creating type' }
+    : { type: createdType, error: null };
 };
 
 export const getTypes = async(): Promise<Type[] | undefined> => {

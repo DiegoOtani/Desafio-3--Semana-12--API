@@ -8,8 +8,8 @@ export const registerType = async(req: Request, res: Response) => {
     const { name } = req.body;
     const createdType = await createType({id, name});
     return createdType.error 
-      ? res.status(400).json({ id: null, error: createdType.error })
-      : res.status(201).json({ id: createdType.id, message: 'Type registered successfully' });
+      ? res.status(400).json({ type: null, error: createdType.error })
+      : res.status(201).json({ type: createdType.type, message: 'Type registered successfully' });
   } catch (error) {
     return res.status(500).json({ error: 'Error creating type' });
   }
