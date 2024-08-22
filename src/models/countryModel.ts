@@ -4,9 +4,3 @@ export type Country = {
   continent: string;
   urlImg: string;
 }
-
-export type CountryUpdate = {
-  name: string | undefined;
-  continent: string | undefined;
-  urlImg: string | undefined;
-}

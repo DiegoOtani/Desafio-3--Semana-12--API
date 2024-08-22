@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { createCountry, getCountries, updateCountryById } from "../services/countryService";
 import { v4 as uuidv4 } from "uuid";
 import { error } from "console";
+import { Country } from "../models/countryModel";
 
 export const registerCountry = async(req: Request, res: Response) => {
   try {
@@ -29,8 +30,14 @@ export const updateCountry = async(req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, continent, urlImg } = req.body;
-    console.log(name, continent, urlImg);
-    const updatedCountry = await updateCountryById(id, {name, continent, urlImg});
+
+    const updates: Partial<Country> = {};
+
+    if(name) updates.name = name;
+    if(continent) updates.continent = continent;
+    if(urlImg) updates.urlImg = urlImg;
+
+    const updatedCountry = await updateCountryById(id, updates);
     return updatedCountry.error
       ? res.status(400).json({ country: null, error: updatedCountry.error })
       : res.status(200).json({ country: updatedCountry.country, message: "Country updated successfully" });
