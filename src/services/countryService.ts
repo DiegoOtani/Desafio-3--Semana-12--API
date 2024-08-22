@@ -24,3 +24,8 @@ export const createCountry = async({ id, name, continent, urlImg }: Country): Pr
     ? { country: null, error: 'Error creating country' }
     : { country: createdCountry, error: null };
 };
+
+export const getCountries = async(): Promise<Country[] | undefined> => {
+  const db = await openDb();
+  return db.all('SELECT * FROM Country');
+};
