@@ -18,3 +18,9 @@ export const createType = async ({ id, name }: Type): Promise<{ id: string | nul
     ? { id: null, error: 'Error creating type' }
     : { id, error: null }
 };
+
+export const getTypes = async(): Promise<Type[] | undefined> => {
+  const db = await openDb();
+
+  return db.all(`SELECT * FROM Type`);
+}
