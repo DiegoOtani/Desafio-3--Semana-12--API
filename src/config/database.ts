@@ -1,7 +1,7 @@
 import  sqlite3 from "sqlite3";
 import { open} from "sqlite";
 
-export const opennDb = async () => {
+export const openDb = async () => {
   return open({
     filename: './src/database/database.db',
     driver: sqlite3.Database
@@ -9,7 +9,7 @@ export const opennDb = async () => {
 }
 
 export async function setupDatabase() {
-  const db = await opennDb();
+  const db = await openDb();
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS Country (
