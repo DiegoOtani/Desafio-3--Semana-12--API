@@ -1,6 +1,5 @@
 import { Country } from "../models/countryModel";
 import { openDb } from "../config/database";
-import { error } from "console";
 
 export const countryExists = async(name: string) => {
   const db = await openDb();
