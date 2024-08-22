@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createType, getTypes } from "../services/typeService";
+import { createType, getTypes, updateTypeById } from "../services/typeService";
 import { v4 as uuidv4 } from "uuid";
 
 export const registerType = async(req: Request, res: Response) => {
@@ -11,15 +11,27 @@ export const registerType = async(req: Request, res: Response) => {
       ? res.status(400).json({ id: null, error: createdType.error })
       : res.status(201).json({ id: createdType.id, message: 'Type registered successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Error creating type' });
+    return res.status(500).json({ error: 'Error creating type' });
   }
-}
+};
 
 export const getAllTypes = async(req: Request, res: Response) => {
   try {
     const types = await getTypes();
     return res.status(200).json({ types });
   } catch (error) {
-    res.status(500).json({ error: 'Error searching type' });
+    return res.status(500).json({ error: 'Error searching type' });
   }
-}
+};
+
+export const updateType = async(req: Request, res: Response) => {
+  try {
+    const { id, name } = req.body;
+    const updatedType = await updateTypeById({id, name});
+    return updatedType.error 
+      ? res.status(400).json({ type: null, error: updatedType.error })
+      : res.status(200).json({ type: updatedType.type, message: 'Type updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating type' });
+  }
+};
