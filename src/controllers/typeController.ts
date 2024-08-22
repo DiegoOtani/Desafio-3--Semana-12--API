@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { createType, getTypes, updateTypeById, deleteTypeById } from "../services/typeService";
 import { v4 as uuidv4 } from "uuid";
-import { error } from "console";
 
 export const registerType = async(req: Request, res: Response) => {
   try {
