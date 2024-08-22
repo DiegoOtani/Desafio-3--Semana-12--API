@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import { createType, getTypes, updateTypeById } from "../services/typeService";
+import { createType, getTypes, updateTypeById, deleteTypeById } from "../services/typeService";
 import { v4 as uuidv4 } from "uuid";
+import { error } from "console";
 
 export const registerType = async(req: Request, res: Response) => {
   try {
@@ -35,3 +36,15 @@ export const updateType = async(req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error updating type' });
   }
 };
+
+export const deleteType = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.body;
+    const deletedType = await deleteTypeById(id);
+    return deletedType.error 
+      ? res.status(400).json({ type: null, error: deletedType.error })
+      : res.status(200).json({ type: deletedType.type, message: 'Type deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting type' });
+  }
+}

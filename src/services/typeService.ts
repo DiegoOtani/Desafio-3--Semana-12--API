@@ -34,7 +34,7 @@ export const updateTypeById = async({ id, name }: Type): Promise<{ type: Type | 
   const db = await openDb();
 
   const existsType = await typeExstsById(id);
-  if(!existsType) return { type:null, error: 'Type not found' };
+  if(!existsType) return { type: null, error: 'Type not found' };
 
   try {
     await db.run(`UPDATE Type SET name = ? WHERE id = ?`, [name, id]);
@@ -44,3 +44,17 @@ export const updateTypeById = async({ id, name }: Type): Promise<{ type: Type | 
     return { type: null, error: 'Error updating type' }
   }  
 };
+
+export const deleteTypeById = async(id: string): Promise<{ type: Type | null, error: string | null }> => {
+  const db = await openDb();
+  
+  const existsType = await typeExstsById(id);
+  if(!existsType) return { type: null, error: 'Type not found' };
+
+  try {
+    await db.run('DELETE FROM Type WHERE id = ?', [id]);
+    return { type: existsType, error: null };
+  } catch (error) {
+    return { type: null, error: 'Error deleting type' };
+  }
+}
