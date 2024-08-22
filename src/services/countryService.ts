@@ -47,3 +47,17 @@ export const updateCountryById = async(id: string, updates: Partial<Country>): P
     return { country: null, error };
   }
 };
+
+export const deleteCountryById = async (id: string): Promise<{ country: Country | null, error: string | null }> => {
+  const db = await openDb();
+
+  const existsCountry = await countryExistsById(id);
+  if(!existsCountry) return { country: null, error: 'Country not found' };
+
+  try {
+    await db.run(`DELETE FROM Country WHERE id = ?`, [id]);
+    return { country: existsCountry, error: null };
+  } catch (error) {
+    return { country: null, error: 'Error deleting country' };
+  }
+}

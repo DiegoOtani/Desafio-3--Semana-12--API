@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCountry, getCountries, updateCountryById } from "../services/countryService";
+import { createCountry, getCountries, updateCountryById, deleteCountryById } from "../services/countryService";
 import { v4 as uuidv4 } from "uuid";
 import { error } from "console";
 import { Country } from "../models/countryModel";
@@ -45,5 +45,17 @@ export const updateCountry = async(req: Request, res: Response) => {
       : res.status(200).json({ country: updatedCountry.country, message: "Country updated successfully" });
   } catch (error) {
     return res.status(500).json({ error: 'Error searching countries' });
+  }
+}
+
+export const deleteCountry = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedCountry = await deleteCountryById(id);
+    return deletedCountry.error
+      ? res.status(400).json({ country: null, error: deletedCountry })
+      : res.status(200).json({ country: deletedCountry.country, message: 'Country deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting country' });
   }
 }
