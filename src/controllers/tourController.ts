@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTour, getTours, updateTourById } from "../services/tourService";
+import { createTour, getTours, updateTourById, deleteTourById } from "../services/tourService";
 import { v4 as uuidv4 } from 'uuid';
 import { tour, TourType } from "../models/tourModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
@@ -42,4 +42,16 @@ export const updateTour = async(req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({ error: 'Error updating tour' });
   }
-}
+};
+
+export const deleteTour = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedTour = await deleteTourById(id);
+    return deletedTour.error
+      ? res.status(400).json({ tour: null, error: deletedTour.error })
+      : res.status(200).json({ tour: deletedTour.tour, message: 'Tour deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting tour' });
+  }
+};
