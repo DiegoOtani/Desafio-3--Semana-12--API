@@ -49,15 +49,29 @@ export const getTours = async(): Promise<TourReturned[]> => {
   const db = await openDb();
   return db.all(`
     SELECT 
-      Tours.*,
-      GROUP_CONCAT(Types.name) AS types
-    FROM 
-      Tours
-    JOIN 
-      TourTypes ON Tours.id = TourTypes.tour_id
-    JOIN 
-      Types ON TourTypes.type_id = Types.id
-    GROUP BY 
-      Tours.id;
+    Tours.id AS tour_id,
+    Tours.name AS tour_name,
+    Destinations.city AS city,
+    Tours.initial_date,
+    Tours.end_date,
+    Tours.duration,
+    Tours.price_per_person,
+    Tours.peoples,
+    Tours.max_people,
+    Tours.min_age,
+    Tours.overview,
+    Tours.location,
+    Tours.ulrImg,
+    GROUP_CONCAT(Types.name) AS types
+FROM 
+    Tours
+JOIN 
+    Destinations ON Tours.city = Destinations.id
+JOIN 
+    TourTypes ON Tours.id = TourTypes.tour_id
+JOIN 
+    Types ON TourTypes.type_id = Types.id
+GROUP BY 
+    Tours.id;
   `);
 };
