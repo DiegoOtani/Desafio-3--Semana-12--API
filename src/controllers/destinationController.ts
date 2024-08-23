@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createDestination, getDestinations, updateDestinationById } from "../services/destinationService";
+import { createDestination, getDestinations, updateDestinationById, deleteDestinationById } from "../services/destinationService";
 import { v4 as uuidv4 } from "uuid";
 import { destination } from "../models/destinationsModel";
 import { generateUpdates } from "../helpers/updateHelper";
@@ -39,5 +39,17 @@ export const updateDestination = async(req: Request, res: Response) => {
       : res.status(200).json({ destination: updatedDestination.destination, message: 'Destination updated successfully' });
   } catch (error) {
     return res.status(500).json({ error: 'Error updating destination' });
+  }
+};
+
+export const deleteDestination = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedDestination = await deleteDestinationById(id);
+    return deletedDestination.error
+      ? res.status(400).json({ destination: null, error: deletedDestination.error })
+      : res.status(200).json({ destination: deletedDestination.destination, message: "Destination deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "Error deletin destination" });
   }
 }
