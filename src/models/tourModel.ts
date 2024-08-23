@@ -29,3 +29,20 @@ export const tour: TourType = {
   location: "",
   ulrImg: "",
 };
+
+export type TourReturned = {
+  id: string;
+  name: string;
+  city: string;
+  initial_date: string;
+  end_date: string;
+  duration: number;
+  price_per_person: number;
+  peoples: number;
+  max_people: number;
+  min_age: number;
+  overview: string;
+  location: string;
+  ulrImg: string;
+  types: string[]
+};

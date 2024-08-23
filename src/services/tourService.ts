@@ -1,4 +1,4 @@
-import { TourType } from "../models/tourModel";
+import { TourType, TourReturned } from "../models/tourModel";
 import { openDb } from "../config/database";
 import { getKeysAndValuesToInsert } from "../helpers/crudHelper";
 import { destinationExistsById } from "./destinationService";
@@ -7,7 +7,7 @@ import { typeExstsById } from "./typeService";
 export const tourExistsById = async(id: string) => {
   const db = await openDb();
   return db.get(`SELECT * FROM Tours WHERE id = ?`, [id]);
-}
+};
 
 export const createTour = async( tour: TourType, types: string[]): Promise<{ tour: TourType | null, error: string | null }> => {
   const db = await openDb();
@@ -43,4 +43,21 @@ export const createTour = async( tour: TourType, types: string[]): Promise<{ tou
     console.error('Database Error:', error);
     return { tour: null, error: 'Error creating tour' };
   }
-}
+};
+
+export const getTours = async(): Promise<TourReturned[]> => {
+  const db = await openDb();
+  return db.all(`
+    SELECT 
+      Tours.*,
+      GROUP_CONCAT(Types.name) AS types
+    FROM 
+      Tours
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    GROUP BY 
+      Tours.id;
+  `);
+};
