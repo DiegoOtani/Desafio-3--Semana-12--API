@@ -9,7 +9,7 @@ export const tourExistsById = async(id: string) => {
   return db.get(`SELECT * FROM Tours WHERE id = ?`, [id]);
 }
 
-export const createTour = async( tour: TourType, types: string[]): Promise<{ tour: TourType | null, error: string | any }> => {
+export const createTour = async( tour: TourType, types: string[]): Promise<{ tour: TourType | null, error: string | null }> => {
   const db = await openDb();
   const tourExists = await tourExistsById(tour.id);
   if(tourExists) return { tour: null, error: "Tour alredy registered" };
@@ -41,6 +41,6 @@ export const createTour = async( tour: TourType, types: string[]): Promise<{ tou
       : { tour: createdTour, error: null }
   } catch (error) {
     console.error('Database Error:', error);
-    return { tour: null, error: error };
+    return { tour: null, error: 'Error creating tour' };
   }
 }
