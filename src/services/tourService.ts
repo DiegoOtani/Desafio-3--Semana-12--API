@@ -1,6 +1,6 @@
 import { TourType, TourReturned } from "../models/tourModel";
 import { openDb } from "../config/database";
-import { getKeysAndValuesToInsert } from "../helpers/crudHelper";
+import { getKeysAndValuesToInsert, getKeysAndValuesToUpdate } from "../helpers/crudHelper";
 import { destinationExistsById } from "./destinationService";
 import { typeExstsById } from "./typeService";
 
@@ -75,3 +75,22 @@ GROUP BY
     Tours.id;
   `);
 };
+
+export const updateTourById = async(id: string, updates: Partial<TourType>): Promise<{
+  tour: TourType | null, error: string | null
+}> => {
+  const db = await openDb();
+
+  const existsTour = await tourExistsById(id);
+  if(!existsTour) return { tour: null, error: 'Tour not found' };
+
+  const{ keys, values } = getKeysAndValuesToUpdate(updates);
+
+  try {
+    await db.run(`UPDATE Tours SET ${keys} WHERE id = ?`, [...values, id]);
+    const updatedTour = await db.get(`SELECT * FROM Tours WHERE id = ?`, [id]);
+    return { tour: updatedTour, error: null };
+  } catch (error) {
+    return { tour: null, error: 'Error updating tour' };
+  }
+}
