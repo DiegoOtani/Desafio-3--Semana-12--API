@@ -30,7 +30,7 @@ export async function setupDatabase() {
   `);
 
   await db.exec(`
-    CREATE TABLE IF NOT EXISTS Type (
+    CREATE TABLE IF NOT EXISTS Types (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL
     )  
@@ -47,13 +47,21 @@ export async function setupDatabase() {
       price_per_person INTEGER NOT NULL,
       peoples INTEGER NOT NULL,
       max_people INTEGER NOT NULL,
-      min_age INTEGER NOT NULL CHECK (max_people IN (3, 12, 18)),
-      type TEXT NOT NULL,
+      min_age INTEGER NOT NULL CHECK (min_age IN (3, 12, 18)),
       overview TEXT NOT NULL,
       location TEXT NOT NULL,
       ulrImg TEXT NOT NULL,
-      FOREIGN KEY (city) REFERENCES Destination(id),
-      FOREIGN KEY (type) REFERENCES Types(id)
+      FOREIGN KEY (city) REFERENCES Destinations(id)
+    )  
+  `);
+  
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS TourTypes(
+      tour_id TEXT NOT NULL,
+      type_id TEXT NOT NULL,
+      PRIMARY KEY (tour_id, type_id),
+      FOREIGN KEY (tour_id) REFERENCES Tours(id),
+      FOREIGN KEY (type_id) REFERENCES Types(id)
     )  
   `);
 
