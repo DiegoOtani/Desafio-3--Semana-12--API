@@ -60,8 +60,8 @@ export async function setupDatabase() {
       tour_id TEXT NOT NULL,
       type_id TEXT NOT NULL,
       PRIMARY KEY (tour_id, type_id),
-      FOREIGN KEY (tour_id) REFERENCES Tours(id),
-      FOREIGN KEY (type_id) REFERENCES Types(id)
+      FOREIGN KEY (tour_id) REFERENCES Tours(id) ON DELETE CASCADE,
+      FOREIGN KEY (type_id) REFERENCES Types(id) ON DELETE CASCADE
     )  
   `);
 
@@ -80,7 +80,7 @@ export async function setupDatabase() {
       average REAL NOT NULL CHECK (average >= 1 AND average <= 5),
       date_review DATE NOT NULL,
       tour_id TEXT NOT NULL,
-      FOREIGN KEY (tour_id) REFERENCES Tours(id)
+      FOREIGN KEY (tour_id) REFERENCES Tours(id) ON DELETE CASCADE
     )
   `);
 }
