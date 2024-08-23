@@ -93,4 +93,18 @@ export const updateTourById = async(id: string, updates: Partial<TourType>): Pro
   } catch (error) {
     return { tour: null, error: 'Error updating tour' };
   }
-}
+};
+
+export const deleteTourById = async(id: string): Promise<{ tour: TourType | null, error: string | null }> => {
+  const db = await openDb();
+  
+  const existsTour = await tourExistsById(id);
+  if(!existsTour) return { tour: null, error: 'Tour not founded' };
+
+  try {
+    await db.run(`DELETE FROM Tours WHERE id = ?`, [id]);
+    return { tour: existsTour, error: null };
+  } catch (error) {
+    return { tour: null, error: 'Error deleting tour' };
+  }
+};
