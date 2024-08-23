@@ -33,3 +33,8 @@ export const createDestination = async({ id, country, city }: Destination): Prom
     ? { destination: null, error: "Error creating destination" }
     : { destination: createdDestination, error: null }
 };
+
+export const getDestinations = async(): Promise<Destination[]> => {
+  const db = await openDb();
+  return db.all(`SELECT * FROM Destinations`);
+};

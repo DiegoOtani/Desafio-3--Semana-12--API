@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { registerDestination } from "../controllers/destinationController";
+import { registerDestination, getAllDestinations } from "../controllers/destinationController";
 
 const router = Router();
 
+router.get('/', getAllDestinations);
 router.post('/', registerDestination);
 
 export default router;
