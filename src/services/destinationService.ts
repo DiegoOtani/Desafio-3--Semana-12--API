@@ -36,5 +36,16 @@ export const createDestination = async({ id, country, city }: Destination): Prom
 
 export const getDestinations = async(): Promise<Destination[]> => {
   const db = await openDb();
-  return db.all(`SELECT * FROM Destinations`);
+  return db.all(`
+    SELECT 
+      Destinations.id, 
+      Country.name as country,
+      Destinations.city
+    FROM 
+      Destinations
+    JOIN
+      Country
+    ON
+      Destinations.country = Country.id
+  `);
 };
