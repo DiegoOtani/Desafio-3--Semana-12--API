@@ -1,6 +1,6 @@
 import { CountryType } from "../models/countryModel";
 import { openDb } from "../config/database";
-import { getKeysAndValuesToUpdate } from "../helpers/updateHelper";
+import { getKeysAndValuesToUpdate } from "../helpers/crudHelper";
 
 export const countryExists = async(name: string) => {
   const db = await openDb();
@@ -37,10 +37,10 @@ export const updateCountryById = async(id: string, updates: Partial<CountryType>
   const existsCountry = await countryExistsById(id);
   if (!existsCountry) return { country: null, error: 'Country not found' };
 
-  const { keys, values } = getKeysAndValuesToUpdate(id, updates);
+  const { keys, values } = getKeysAndValuesToUpdate(updates);
 
   try {
-    await db.run(`UPDATE Country SET ${keys} WHERE id = ?`, values);
+    await db.run(`UPDATE Country SET ${keys} WHERE id = ?`, [...values, id]);
     const updatedCountry = await db.get(`SELECT * FROM Country WHERE id = ?`, [id]);
     return { country: updatedCountry, error: null };
   } catch (error) {
