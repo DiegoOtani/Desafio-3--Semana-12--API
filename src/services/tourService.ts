@@ -40,7 +40,6 @@ export const createTour = async( tour: TourType, types: string[]): Promise<{ tou
       ? { tour: null, error: 'Error creating tour' }
       : { tour: createdTour, error: null }
   } catch (error) {
-    console.error('Database Error:', error);
     return { tour: null, error: 'Error creating tour' };
   }
 };
