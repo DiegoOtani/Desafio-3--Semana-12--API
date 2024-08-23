@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { createDestination, getDestinations, updateDestinationById, deleteDestinationById } from "../services/destinationService";
 import { v4 as uuidv4 } from "uuid";
 import { destination } from "../models/destinationsModel";
-import { generateUpdates } from "../helpers/updateHelper";
+import { generateUpdates } from "../helpers/crudHelper";
 
 export const registerDestination = async(req: Request, res: Response) => {
   try {

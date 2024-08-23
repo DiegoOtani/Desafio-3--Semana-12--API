@@ -1,6 +1,6 @@
 import { DestinationType } from "../models/destinationsModel";
 import { openDb } from "../config/database";;
-import { getKeysAndValuesToUpdate } from "../helpers/updateHelper";
+import { getKeysAndValuesToUpdate } from "../helpers/crudHelper";
 
 export const destinationExists = async(city: string) => {
   const db = await openDb();
@@ -59,10 +59,10 @@ export const updateDestinationById = async(id: string, updates: Partial<Destinat
     const existsDestination = await destinationExistsById(id);
     if(!existsDestination) return { destination: null, error: 'Destination not found' };
     
-    const { keys, values } = getKeysAndValuesToUpdate(id, updates);
+    const { keys, values } = getKeysAndValuesToUpdate( updates);
 
     try {
-      await db.run(`UPDATE Destinations SET ${keys} WHERE id = ?`, values);
+      await db.run(`UPDATE Destinations SET ${keys} WHERE id = ?`, [...values, id]);
       const updatedDestination = await db.get(`SELECT * FROM Destinations WHERE id = ?`, [id]);
       return { destination: updatedDestination, error: null };
     } catch (error) {
