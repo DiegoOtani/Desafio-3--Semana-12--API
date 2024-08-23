@@ -69,3 +69,19 @@ export const updateDestinationById = async(id: string, updates: Partial<Destinat
       return { destination: null, error: "Error updating destination" };
     }
 };
+
+export const deleteDestinationById = async(id: string): Promise<{
+  destination: DestinationType | null, error: string | null;
+}> => {
+  const db = await openDb();
+  
+  const existsDestination = await destinationExistsById(id);
+  if(!existsDestination) return { destination: null, error: 'Destination not found' };
+
+  try {
+    await db.run(`DELETE FROM Destinations WHERE id = ?`, [id]);
+    return { destination: existsDestination, error: null };
+  } catch (error) {
+    return { destination: null, error: 'Error deleting destination' };
+  }
+}
