@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createReview } from "../services/reviewsService";
+import { createReview, getReview } from "../services/reviewsService";
 import { v4 as uuidv4 } from "uuid";
 import { review, ReviewType } from "../models/reviewsModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
@@ -15,5 +15,14 @@ export const registerReview = async(req: Request, res: Response) => {
       : res.status(200).json({ review: createdReview.review, message: 'Review created successfully' });
   } catch (error) {
     return res.status(500).json({ error: 'Error creating review' });
+  }
+};
+
+export const getAllReviews = async(req: Request, res: Response) => {
+  try {
+    const reviews = await getReview();
+    return res.status(200).json({ reviews });
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro searching reviews' });
   }
 };

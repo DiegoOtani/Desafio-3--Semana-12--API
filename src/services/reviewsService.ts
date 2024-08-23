@@ -32,3 +32,8 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
     return { review: null, error: 'Error creating review'};
   }
 };
+
+export const getReview = async(): Promise<ReviewType[]> => {
+  const db = await openDb();
+  return db.all(`SELECT * FROM Reviews`);
+}
