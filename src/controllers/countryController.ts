@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { createCountry, getCountries, updateCountryById, deleteCountryById } from "../services/countryService";
 import { v4 as uuidv4 } from "uuid";
-import { error } from "console";
 import { Country } from "../models/countryModel";
 
 export const registerCountry = async(req: Request, res: Response) => {
