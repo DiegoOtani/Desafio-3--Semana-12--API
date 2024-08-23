@@ -1,5 +1,6 @@
-import { Destination } from "../models/destinationsModel";
+import { DestinationType } from "../models/destinationsModel";
 import { openDb } from "../config/database";;
+import { getKeysAndValuesToUpdate } from "../helpers/updateHelper";
 
 export const destinationExists = async(city: string) => {
   const db = await openDb();
@@ -16,7 +17,7 @@ export const countryIsRegistered = async(id:string) => {
   return db.get('SELECT * FROM Country WHERE id = ?', [id]);
 };
 
-export const createDestination = async({ id, country, city }: Destination): Promise<{ destination: Destination | null, error: string | null }> => {
+export const createDestination = async({ id, country, city }: DestinationType): Promise<{ destination: DestinationType | null, error: string | null }> => {
   const db = await openDb();
 
   const existsDestination = await destinationExists(city);
@@ -33,3 +34,54 @@ export const createDestination = async({ id, country, city }: Destination): Prom
     ? { destination: null, error: "Error creating destination" }
     : { destination: createdDestination, error: null }
 };
+
+export const getDestinations = async(): Promise<DestinationType[]> => {
+  const db = await openDb();
+  return db.all(`
+    SELECT 
+      Destinations.id, 
+      Country.name as country,
+      Destinations.city
+    FROM 
+      Destinations
+    JOIN
+      Country
+    ON
+      Destinations.country = Country.id
+  `);
+};
+
+export const updateDestinationById = async(id: string, updates: Partial<DestinationType>): Promise<{
+    destination: DestinationType | null, error: string | null 
+  }> => {
+    const db = await openDb();
+
+    const existsDestination = await destinationExistsById(id);
+    if(!existsDestination) return { destination: null, error: 'Destination not found' };
+    
+    const { keys, values } = getKeysAndValuesToUpdate(id, updates);
+
+    try {
+      await db.run(`UPDATE Destinations SET ${keys} WHERE id = ?`, values);
+      const updatedDestination = await db.get(`SELECT * FROM Destinations WHERE id = ?`, [id]);
+      return { destination: updatedDestination, error: null };
+    } catch (error) {
+      return { destination: null, error: "Error updating destination" };
+    }
+};
+
+export const deleteDestinationById = async(id: string): Promise<{
+  destination: DestinationType | null, error: string | null;
+}> => {
+  const db = await openDb();
+  
+  const existsDestination = await destinationExistsById(id);
+  if(!existsDestination) return { destination: null, error: 'Destination not found' };
+
+  try {
+    await db.run(`DELETE FROM Destinations WHERE id = ?`, [id]);
+    return { destination: existsDestination, error: null };
+  } catch (error) {
+    return { destination: null, error: 'Error deleting destination' };
+  }
+}
