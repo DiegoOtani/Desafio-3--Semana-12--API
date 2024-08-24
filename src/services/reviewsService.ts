@@ -36,4 +36,23 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
 export const getReview = async(): Promise<ReviewType[]> => {
   const db = await openDb();
   return db.all(`SELECT * FROM Reviews`);
-}
+};
+
+export const updateReviewById = async(id:string,  updates: Partial<ReviewType>): Promise<{
+  review: ReviewType | null, error: string | null
+}> => {
+  const db = await openDb();
+
+  const existsReview = reviewExistsById(id);
+  if(!existsReview) return { review: null, error: 'Review not found' };
+
+  const { keys, values } = getKeysAndValuesToUpdate(updates);
+
+  try {
+    await db.run(`UPDATE Reviews SET ${keys} WHERE id = ?`,[...values, id]);
+    const updatedReview = await db.get(`SELECT * FROM Reviews WHERE id = ?`, [id]);
+    return { review: updatedReview, error: null };
+  } catch (error) {
+    return { review: null, error: 'Error updating review' };
+  }
+};
