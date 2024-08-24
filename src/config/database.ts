@@ -68,7 +68,7 @@ export async function setupDatabase() {
   await db.exec(`
     CREATE TABLE IF NOT EXISTS Reviews (
       id TEXT PRIMARY KEY,
-      namt TEXT NOT NULL,
+      name TEXT NOT NULL,
       email TEXT NOT NULL,
       comment TEXT NOT NULL,
       services INTEGER NOT NULL CHECK (services >= 1 AND services <= 5),

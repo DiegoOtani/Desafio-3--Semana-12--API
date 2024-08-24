@@ -3,6 +3,7 @@ import typeRouter from '../routes/typeRoutes';
 import countryRouter from '../routes/countryRoutes';
 import destinationRouter from '../routes/destinationRoutes';
 import tourRouter from '../routes/tourRoutes';
+import reviewRouter from '../routes/reviewRoutes';
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.use('/api/type', typeRouter);
 app.use('/api/country', countryRouter);
 app.use('/api/destination', destinationRouter);
 app.use('/api/tour', tourRouter);
+app.use('/api/review', reviewRouter);
 
 export default app;
