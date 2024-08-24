@@ -30,7 +30,7 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
       : { review: createdReview, error: null };
   } catch (error) {
     return { review: null, error: 'Error creating review'};
-  }
+  };
 };
 
 export const getReview = async(): Promise<ReviewType[]> => {
@@ -54,5 +54,19 @@ export const updateReviewById = async(id:string,  updates: Partial<ReviewType>):
     return { review: updatedReview, error: null };
   } catch (error) {
     return { review: null, error: 'Error updating review' };
-  }
+  };
+};
+
+export const deleteReviewById = async(id: string): Promise<{ review: ReviewType | null, error: string | null }> => {
+  const db = await openDb();
+  
+  const existsReview = await reviewExistsById(id);
+  if(!existsReview) return { review: null, error: 'Review not found' };
+
+  try {
+    await db.run(`DELETE FROM Reviews WHERE id = ?`, [id]);
+    return { review: existsReview, error: null };
+  } catch (error) {
+    return { review: null, error: 'Error deleting review' };
+  };
 };
