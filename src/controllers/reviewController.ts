@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import { createReview, getReview } from "../services/reviewsService";
+import { createReview, getReview, updateReviewById } from "../services/reviewsService";
 import { v4 as uuidv4 } from "uuid";
 import { review, ReviewType } from "../models/reviewsModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
+import { error } from "console";
 
 export const registerReview = async(req: Request, res: Response) => {
   try {
@@ -24,5 +25,21 @@ export const getAllReviews = async(req: Request, res: Response) => {
     return res.status(200).json({ reviews });
   } catch (error) {
     return res.status(500).json({ error: 'Erro searching reviews' });
+  }
+};
+
+export const updateReview = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updates = generateUpdates(review, req.body);
+
+    if(Object.keys(updates).length === 0) return res.status(400).json({ error: 'No fields provided for update' });
+
+    const updatedReview = await updateReviewById(id, updates);
+    return updatedReview.error
+      ? res.status(400).json({ review: null, error: updatedReview.error })
+      : res.status(200).json({ review: updatedReview.review, message: 'Review updated successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error updating review' });
   }
 };
