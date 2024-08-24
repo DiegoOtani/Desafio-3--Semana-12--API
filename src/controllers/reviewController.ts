@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { createReview, getReview, updateReviewById } from "../services/reviewsService";
+import { createReview, getReview, updateReviewById, deleteReviewById } from "../services/reviewsService";
 import { v4 as uuidv4 } from "uuid";
 import { review, ReviewType } from "../models/reviewsModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
-import { error } from "console";
 
 export const registerReview = async(req: Request, res: Response) => {
   try {
@@ -16,7 +15,7 @@ export const registerReview = async(req: Request, res: Response) => {
       : res.status(200).json({ review: createdReview.review, message: 'Review created successfully' });
   } catch (error) {
     return res.status(500).json({ error: 'Error creating review' });
-  }
+  };
 };
 
 export const getAllReviews = async(req: Request, res: Response) => {
@@ -25,7 +24,7 @@ export const getAllReviews = async(req: Request, res: Response) => {
     return res.status(200).json({ reviews });
   } catch (error) {
     return res.status(500).json({ error: 'Erro searching reviews' });
-  }
+  };
 };
 
 export const updateReview = async(req: Request, res: Response) => {
@@ -41,5 +40,17 @@ export const updateReview = async(req: Request, res: Response) => {
       : res.status(200).json({ review: updatedReview.review, message: 'Review updated successfully' });
   } catch (error) {
     return res.status(500).json({ error: 'Error updating review' });
-  }
+  };
+};
+
+export const deleteReview = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const deletedReview = await deleteReviewById(id);
+    return deletedReview.error
+      ? res.status(400).json({ review: null, error: deletedReview.error })
+      : res.status(200).json({ review: deletedReview.review, message: 'Review deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error deleting review' });
+  };
 };
