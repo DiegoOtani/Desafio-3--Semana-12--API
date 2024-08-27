@@ -4,8 +4,11 @@ import countryRouter from '../routes/countryRoutes';
 import destinationRouter from '../routes/destinationRoutes';
 import tourRouter from '../routes/tourRoutes';
 import reviewRouter from '../routes/reviewRoutes';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
