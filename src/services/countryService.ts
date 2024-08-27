@@ -1,5 +1,6 @@
-import { Country } from "../models/countryModel";
+import { CountryType } from "../models/countryModel";
 import { openDb } from "../config/database";
+import { getKeysAndValuesToUpdate } from "../helpers/crudHelper";
 
 export const countryExists = async(name: string) => {
   const db = await openDb();
@@ -11,7 +12,7 @@ export const countryExistsById = async(id: string) => {
   return await db.get('SELECT * FROM Country WHERE id = ?', [id]);
 }
 
-export const createCountry = async({ id, name, continent, urlImg }: Country): Promise<{ country: Country | null, error: string | null }> => {
+export const createCountry = async({ id, name, continent, urlImg }: CountryType): Promise<{ country: CountryType | null, error: string | null }> => {
   const db = await openDb();
 
   const existsCountry = await countryExists(name);
@@ -25,22 +26,21 @@ export const createCountry = async({ id, name, continent, urlImg }: Country): Pr
     : { country: createdCountry, error: null };
 };
 
-export const getCountries = async(): Promise<Country[] | undefined> => {
+export const getCountries = async(): Promise<CountryType[] | undefined> => {
   const db = await openDb();
   return db.all('SELECT * FROM Country');
 };
 
-export const updateCountryById = async(id: string, updates: Partial<Country>): Promise<{ country: Country | null, error: any | null }> => {
+export const updateCountryById = async(id: string, updates: Partial<CountryType>): Promise<{ country: CountryType | null, error: any | null }> => {
   const db = await openDb();
 
   const existsCountry = await countryExistsById(id);
   if (!existsCountry) return { country: null, error: 'Country not found' };
 
-  const setKeys = Object.keys(updates).map((key) => `${key} = ?`).join(', ');
-  const values = [...Object.values(updates), id];
+  const { keys, values } = getKeysAndValuesToUpdate(updates);
 
   try {
-    await db.run(`UPDATE Country SET ${setKeys} WHERE id = ?`, values);
+    await db.run(`UPDATE Country SET ${keys} WHERE id = ?`, [...values, id]);
     const updatedCountry = await db.get(`SELECT * FROM Country WHERE id = ?`, [id]);
     return { country: updatedCountry, error: null };
   } catch (error) {
@@ -48,7 +48,7 @@ export const updateCountryById = async(id: string, updates: Partial<Country>): P
   }
 };
 
-export const deleteCountryById = async (id: string): Promise<{ country: Country | null, error: string | null }> => {
+export const deleteCountryById = async (id: string): Promise<{ country: CountryType | null, error: string | null }> => {
   const db = await openDb();
 
   const existsCountry = await countryExistsById(id);
