@@ -27,7 +27,20 @@ export const createType = async ({ id, name }: Type): Promise<{ type: Type | nul
 export const getTypes = async(): Promise<Type[] | undefined> => {
   const db = await openDb();
 
-  return db.all(`SELECT * FROM Types`);
+  return db.all(`
+    SELECT
+      t.id AS type_id,
+      t.name AS type_name,
+      COUNT(tt.tour_id) AS tour_count,
+      MIN(tour.price_per_person) AS min_price
+    FROM
+      Types t
+    LEFT JOIN
+      TourTypes tt ON t.id = tt.type_id
+    LEFT JOIN
+      Tours tour ON tt.tour_id = tour.id
+    GROUP BY
+      t.id, t.name;`);
 };
 
 export const updateTypeById = async({ id, name }: Type): Promise<{ type: Type | null, error: string | null }> => {
