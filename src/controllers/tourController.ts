@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTour, getTours, updateTourById, deleteTourById } from "../services/tourService";
+import { createTour, getTours, updateTourById, deleteTourById, getToursByPage } from "../services/tourService";
 import { v4 as uuidv4 } from 'uuid';
 import { tour, TourType } from "../models/tourModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
@@ -16,7 +16,7 @@ export const registerTour = async(req: Request, res: Response) => {
       : res.status(201).json({ tour: createdTour.tour, message: 'Tour created successfuuly' });
   } catch (error) {
     return res.status(500).json({ error: 'Error creating tour' });
-  }
+  };
 };
 
 export const getAllTours = async(req: Request, res: Response) => {
@@ -25,7 +25,19 @@ export const getAllTours = async(req: Request, res: Response) => {
     return res.status(200).json({ tours });
   } catch (error) {
     return res.status(500).json({ error: 'Error searching tours' });
-  }
+  };
+};
+
+export const getAllToursByPage = async(req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 9;
+    const {tours, total} = await getToursByPage(page, limit);
+
+    res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });
+  } catch (error) {
+    res.status(500).json({ error: 'Error searchint tours' });
+  };
 };
 
 export const updateTour = async(req: Request, res: Response) => {
