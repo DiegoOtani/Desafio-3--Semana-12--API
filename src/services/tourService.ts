@@ -82,6 +82,55 @@ export const getTours = async (): Promise<TourReturned[]> => {
   `);
 };
 
+export const getToursByPage = async(page: number = 1, limit: number = 9): Promise<{ tours: TourReturned[], total: number | undefined }> => {
+  const db = await openDb();
+  const offset = (page - 1) * limit;
+
+  const tours = await db.all<TourReturned[]>(`
+    SELECT 
+      Tours.id AS tour_id,
+      Tours.name AS tour_name,
+      Destinations.city AS city,
+      Country.name AS country_name,
+      Tours.initial_date,
+      Tours.end_date,
+      Tours.duration,
+      Tours.price_per_person,
+      Tours.peoples,
+      Tours.max_people,
+      Tours.min_age,
+      Tours.overview,
+      Tours.location,
+      Tours.ulrImg,
+      GROUP_CONCAT(Types.name) AS types,
+      COUNT(Reviews.id) AS review_count,
+      AVG(Reviews.average) AS average_review
+    FROM 
+      Tours
+    JOIN 
+      Destinations ON Tours.city = Destinations.id
+    JOIN 
+      Country ON Destinations.country = Country.id
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    LEFT JOIN 
+      Reviews ON Tours.id = Reviews.tour_id
+    GROUP BY 
+      Tours.id
+    LIMIT ? OFFSET ?;
+  `, [limit, offset]);
+
+  const total = await db.get<{ count: number }>(`
+    SELECT COUNT(*) AS count FROM Tours
+  `);
+
+  return {
+    tours,
+    total: total?.count || 0
+  };
+};
 
 export const updateTourById = async(id: string, updates: Partial<TourType>): Promise<{
   tour: TourType | null, error: string | null
