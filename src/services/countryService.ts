@@ -31,6 +31,23 @@ export const getCountries = async(): Promise<CountryType[] | undefined> => {
   return db.all('SELECT * FROM Country');
 };
 
+export const getCountriesByCont = async () => {
+  const db = await openDb();
+  const rows = await db.all(`
+    SELECT continent, json_group_array(json_object(
+      'id', id,
+      'name', name,
+      'urlImg', urlImg
+    )) AS countries
+    FROM Country
+    GROUP BY continent;
+  `);
+
+  return rows.map(row => ({
+    continent: row.continent,
+    countries: JSON.parse(row.countries),
+  }));
+};
 export const updateCountryById = async(id: string, updates: Partial<CountryType>): Promise<{ country: CountryType | null, error: any | null }> => {
   const db = await openDb();
 
