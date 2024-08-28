@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createCountry, getCountries, updateCountryById, deleteCountryById } from "../services/countryService";
+import { createCountry, getCountries, updateCountryById, deleteCountryById, getCountriesByCont } from "../services/countryService";
 import { v4 as uuidv4 } from "uuid";
 import { country } from "../models/countryModel";
 import { generateUpdates } from "../helpers/crudHelper";
@@ -20,6 +20,15 @@ export const registerCountry = async(req: Request, res: Response) => {
 export const getAllCountries = async(req: Request, res: Response) => {
   try {
     const countries = await getCountries();
+    return res.status(200).json({ countries });
+  } catch (error) {
+    return res.status(500).json({ error: 'Error searching countries' });
+  }
+};
+
+export const getAllCountriesByCont = async(req: Request, res: Response) => {
+  try {
+    const countries = await getCountriesByCont();
     return res.status(200).json({ countries });
   } catch (error) {
     return res.status(500).json({ error: 'Error searching countries' });
