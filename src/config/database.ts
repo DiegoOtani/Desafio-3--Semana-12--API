@@ -65,7 +65,6 @@ export async function setupDatabase() {
     )  
   `);
   
-  await db.exec(`DROP TABLE IF EXISTS Reviews`);
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS Reviews (
@@ -86,4 +85,4 @@ export async function setupDatabase() {
       FOREIGN KEY (tour_id) REFERENCES Tours(id) ON DELETE CASCADE
     )
   `);
-}
+};
