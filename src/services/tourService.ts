@@ -150,7 +150,7 @@ export const getTourById = async(id: string): Promise<TourReturned> => {
       Tours.overview,
       Tours.location,
       Tours.ulrImg,
-      GROUP_CONCAT(Types.name) AS types,
+      GROUP_CONCAT(DISTINCT Types.name) AS types,
       COUNT(Reviews.id) AS review_count,
       AVG(Reviews.average) AS average_review
     FROM 
