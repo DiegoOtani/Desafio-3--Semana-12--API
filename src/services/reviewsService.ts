@@ -14,7 +14,7 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
   const reviewExists = await reviewExistsById(review.id);
   if(reviewExists) return { review: null, error: 'Review already registered' };
 
-  const tourExists = tourExistsById(review.tour_id);
+  const tourExists = await tourExistsById(review.tour_id);
   if(!tourExists) return { review: null, error: 'Tour not founded' };
 
   const { keys, valuesQuery, values } = getKeysAndValuesToInsert(review);
@@ -36,6 +36,30 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
 export const getReview = async(): Promise<ReviewType[]> => {
   const db = await openDb();
   return db.all(`SELECT * FROM Reviews`);
+};
+
+export const getReviewAveragesByTourId = async (tourId: string) => {
+  const db = await openDb();
+  
+  const tourExists = await tourExistsById(tourId);
+  if(!tourExists) return { review: null, error: 'Tour not founded' };
+
+  const result = await db.get(`
+    SELECT 
+      AVG(services) AS avg_services,
+      AVG(prices) AS avg_prices,
+      AVG(locations) AS avg_locations,
+      AVG(food) AS avg_food,
+      AVG(amenities) AS avg_amenities,
+      AVG(room_comfort_quality) AS avg_room_comfort_quality,
+      AVG(average) AS avg_overall
+    FROM Reviews
+    WHERE tour_id = ?;
+    `,
+    [tourId]
+  );
+
+  return result;
 };
 
 export const updateReviewById = async(id:string,  updates: Partial<ReviewType>): Promise<{
