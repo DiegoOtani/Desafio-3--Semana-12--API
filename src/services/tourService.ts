@@ -132,6 +132,47 @@ export const getToursByPage = async(page: number = 1, limit: number = 9): Promis
   };
 };
 
+export const getTourById = async(id: string): Promise<TourReturned> => {
+  const db = await openDb();
+  const tour = await db.get(`
+    SELECT 
+      Tours.id AS tour_id,
+      Tours.name AS tour_name,
+      Destinations.city AS city,
+      Country.name AS country_name,
+      Tours.initial_date,
+      Tours.end_date,
+      Tours.duration,
+      Tours.price_per_person,
+      Tours.peoples,
+      Tours.max_people,
+      Tours.min_age,
+      Tours.overview,
+      Tours.location,
+      Tours.ulrImg,
+      GROUP_CONCAT(Types.name) AS types,
+      COUNT(Reviews.id) AS review_count,
+      AVG(Reviews.average) AS average_review
+    FROM 
+      Tours
+    JOIN 
+      Destinations ON Tours.city = Destinations.id
+    JOIN 
+      Country ON Destinations.country = Country.id
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    LEFT JOIN 
+      Reviews ON Tours.id = Reviews.tour_id
+    WHERE 
+      Tours.id = ?
+    GROUP BY 
+      Tours.id;
+  `, [id]);
+  return tour || null;
+};
+
 export const updateTourById = async(id: string, updates: Partial<TourType>): Promise<{
   tour: TourType | null, error: string | null
 }> => {
