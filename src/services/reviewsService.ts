@@ -62,6 +62,35 @@ export const getReviewAveragesByTourId = async (tourId: string) => {
   return result;
 };
 
+export const getReviewsByTourId = async (tourId: string): Promise<{ reviews: any[] | null, error: string | null }> => {
+  const db = await openDb();
+  
+  const tourExists = await tourExistsById(tourId);
+  if (!tourExists) return { reviews: null, error: 'Tour not found' };
+
+  try {
+    const reviews = await db.all(`
+      SELECT 
+        r.date_review,
+        r.name,
+        r.average AS average_rating,
+        r.comment,
+        (
+          SELECT COUNT(*) 
+          FROM Reviews
+          WHERE user_id = r.user_id
+        ) AS review_count_by_user
+      FROM Reviews r
+      WHERE r.tour_id = ?
+    `, [tourId]);
+
+    return { reviews, error: null };
+  } catch (error) {
+    return { reviews: null, error: 'Error fetching reviews' };
+  }
+};
+
+
 export const updateReviewById = async(id:string,  updates: Partial<ReviewType>): Promise<{
   review: ReviewType | null, error: string | null
 }> => {
