@@ -4,7 +4,8 @@ import {
   getAllReviews, 
   updateReview, 
   deleteReview, 
-  getAverageReviewById 
+  getAverageReviewById, 
+  getReviewsByTour
 } from "../controllers/reviewController";
 
 const router = Router();
@@ -15,5 +16,6 @@ router.put('/:id', updateReview);
 router.delete('/:id', deleteReview);
 
 router.get('/avg/:id', getAverageReviewById);
+router.get('/tour/:id', getReviewsByTour);
 
 export default router;

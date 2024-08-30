@@ -4,7 +4,9 @@ import {
   getReview, 
   updateReviewById, 
   deleteReviewById, 
-  getReviewAveragesByTourId } from "../services/reviewsService";
+  getReviewAveragesByTourId,
+  getReviewsByTourId
+} from "../services/reviewsService";
 import { v4 as uuidv4 } from "uuid";
 import { review, ReviewType } from "../models/reviewsModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
@@ -41,7 +43,19 @@ export const getAverageReviewById = async(req: Request, res: Response) => {
       ? res.status(400).json({ review: null, error: review.error })
       : res.status(200).json({ review });
   } catch (error) {
-    return res.status(500).json({ error: 'Erro searchin review' });
+    return res.status(500).json({ error: 'Erro searching review' });
+  }
+};
+
+export const getReviewsByTour = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const reviews = await getReviewsByTourId(id);
+    return reviews.error
+      ? res.status(400).json({ review:null, error: reviews.error })
+      : res.status(200).json(reviews);
+  } catch (error) {
+    return res.status(500).json({ error: 'Erro searching reviews' });
   }
 };
 
