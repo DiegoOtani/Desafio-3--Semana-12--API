@@ -36,8 +36,10 @@ export const getAllToursByPage = async(req: Request, res: Response) => {
     const categories = (req.query.categories as string)?.split(',') || [];
     const destinations = (req.query.destinations as string)?.split(',') || [];
     const rating = Number(req.query.rating) || 0;
+    const search = (req.query.search as string) || "";
+    const price = req.query.price || 0;
 
-    const {tours, total} = await getToursByPage(page, limit, categories, destinations, rating);
+    const {tours, total} = await getToursByPage(page, limit, categories, destinations, rating, search);
 
     res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });
   } catch (error) {

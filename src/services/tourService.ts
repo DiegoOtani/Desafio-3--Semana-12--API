@@ -88,6 +88,7 @@ export const getToursByPage = async (
   categories: string[] = [],
   countryDestinations: string[] = [],
   rating: number = 0,
+  search: string,
 ): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
@@ -141,6 +142,11 @@ export const getToursByPage = async (
   if (rating > 0) {
     conditions.push(`Reviews.average >= ?`);
     parameters.push(rating);
+  }
+
+  if (search) {
+    conditions.push(`(Tours.name LIKE ? OR Destinations.city LIKE ?)`);
+    parameters.push(`%${search}%`, `%${search}%`);
   }
 
   if (conditions.length > 0) {
