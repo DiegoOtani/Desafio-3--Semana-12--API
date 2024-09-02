@@ -87,7 +87,7 @@ export const getToursByPage = async (
   limit: number = 9,
   categories: string[] = [],
   countryDestinations: string[] = [],
-  ratings: number[] = []
+  rating: number = 0,
 ): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
@@ -138,9 +138,9 @@ export const getToursByPage = async (
     parameters.push(...countryDestinations);
   }
 
-  if (ratings.length > 0) {
-    conditions.push(`Reviews.average IN (${ratings.map(() => '?').join(',')})`);
-    parameters.push(...ratings);
+  if (rating > 0) {
+    conditions.push(`Reviews.average >= ?`);
+    parameters.push(rating);
   }
 
   if (conditions.length > 0) {
@@ -178,6 +178,7 @@ export const getToursByPage = async (
     total: total?.count || 0
   };
 };
+
 
 export const getTourById = async(id: string): Promise<TourReturned> => {
   const db = await openDb();
