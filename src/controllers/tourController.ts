@@ -37,8 +37,6 @@ export const getAllToursByPage = async(req: Request, res: Response) => {
     const destinations = (req.query.destinations as string)?.split(',') || [];
     const ratings = (req.query.ratings as string)?.split(',').map(Number) || [];
 
-    console.log(categories, destinations, ratings)
-
     const {tours, total} = await getToursByPage(page, limit, categories, destinations, ratings);
 
     res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });

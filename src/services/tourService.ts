@@ -82,13 +82,13 @@ export const getTours = async (): Promise<TourReturned[]> => {
   `);
 };
 
-export const getToursByPage = async(
-    page: number = 1, 
-    limit: number = 9,
-    categories: string[] = [],
-    destinations: string[] = [],
-    ratings: number[] = []
-  ): Promise<{ tours: TourReturned[], total: number | undefined }> => {
+export const getToursByPage = async (
+  page: number = 1, 
+  limit: number = 9,
+  categories: string[] = [],
+  countryDestinations: string[] = [], // Renomeado para refletir que são países
+  ratings: number[] = []
+): Promise<{ tours: TourReturned[], total: number | undefined }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
 
@@ -133,9 +133,9 @@ export const getToursByPage = async(
     parameters.push(...categories);
   }
 
-  if (destinations.length > 0) {
-    conditions.push(`Destinations.city IN (${destinations.map(() => '?').join(',')})`);
-    parameters.push(...destinations);
+  if (countryDestinations.length > 0) {
+    conditions.push(`Country.name IN (${countryDestinations.map(() => '?').join(',')})`);
+    parameters.push(...countryDestinations);
   }
 
   if (ratings.length > 0) {
@@ -165,6 +165,7 @@ export const getToursByPage = async(
     total: total?.count || 0
   };
 };
+
 
 export const getTourById = async(id: string): Promise<TourReturned> => {
   const db = await openDb();
