@@ -32,7 +32,14 @@ export const getAllToursByPage = async(req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 9;
-    const {tours, total} = await getToursByPage(page, limit);
+
+    const categories = (req.query.categories as string)?.split(',') || [];
+    const destinations = (req.query.destinations as string)?.split(',') || [];
+    const ratings = (req.query.ratings as string)?.split(',').map(Number) || [];
+
+    console.log(categories, destinations, ratings)
+
+    const {tours, total} = await getToursByPage(page, limit, categories, destinations, ratings);
 
     res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });
   } catch (error) {

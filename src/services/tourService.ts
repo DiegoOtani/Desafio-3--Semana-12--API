@@ -82,11 +82,17 @@ export const getTours = async (): Promise<TourReturned[]> => {
   `);
 };
 
-export const getToursByPage = async(page: number = 1, limit: number = 9): Promise<{ tours: TourReturned[], total: number | undefined }> => {
+export const getToursByPage = async(
+    page: number = 1, 
+    limit: number = 9,
+    categories: string[] = [],
+    destinations: string[] = [],
+    ratings: number[] = []
+  ): Promise<{ tours: TourReturned[], total: number | undefined }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
 
-  const tours = await db.all<TourReturned[]>(`
+  let query = `
     SELECT 
       Tours.id AS tour_id,
       Tours.name AS tour_name,
@@ -117,10 +123,38 @@ export const getToursByPage = async(page: number = 1, limit: number = 9): Promis
       Types ON TourTypes.type_id = Types.id
     LEFT JOIN 
       Reviews ON Tours.id = Reviews.tour_id
-    GROUP BY 
-      Tours.id
+  `;
+
+  const conditions: string[] = [];
+  const parameters: any[] = [];
+
+  if (categories.length > 0) {
+    conditions.push(`Types.name IN (${categories.map(() => '?').join(',')})`);
+    parameters.push(...categories);
+  }
+
+  if (destinations.length > 0) {
+    conditions.push(`Destinations.city IN (${destinations.map(() => '?').join(',')})`);
+    parameters.push(...destinations);
+  }
+
+  if (ratings.length > 0) {
+    conditions.push(`Reviews.average IN (${ratings.map(() => '?').join(',')})`);
+    parameters.push(...ratings);
+  }
+
+  if (conditions.length > 0) {
+    query += ` WHERE ${conditions.join(' AND ')}`;
+  }
+
+  query += `
+    GROUP BY Tours.id
     LIMIT ? OFFSET ?;
-  `, [limit, offset]);
+  `;
+
+  parameters.push(limit, offset);
+
+  const tours = await db.all<TourReturned[]>(query, parameters);
 
   const total = await db.get<{ count: number }>(`
     SELECT COUNT(*) AS count FROM Tours
