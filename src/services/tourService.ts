@@ -86,9 +86,9 @@ export const getToursByPage = async (
   page: number = 1, 
   limit: number = 9,
   categories: string[] = [],
-  countryDestinations: string[] = [], // Renomeado para refletir que são países
+  countryDestinations: string[] = [],
   ratings: number[] = []
-): Promise<{ tours: TourReturned[], total: number | undefined }> => {
+): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
 
@@ -152,20 +152,32 @@ export const getToursByPage = async (
     LIMIT ? OFFSET ?;
   `;
 
-  parameters.push(limit, offset);
+  const tours = await db.all<TourReturned[]>(query, [...parameters, limit, offset]);
 
-  const tours = await db.all<TourReturned[]>(query, parameters);
+  const countQuery = `
+    SELECT COUNT(DISTINCT Tours.id) AS count
+    FROM 
+      Tours
+    JOIN 
+      Destinations ON Tours.city = Destinations.id
+    JOIN 
+      Country ON Destinations.country = Country.id
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    LEFT JOIN 
+      Reviews ON Tours.id = Reviews.tour_id
+    ${conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''}
+  `;
 
-  const total = await db.get<{ count: number }>(`
-    SELECT COUNT(*) AS count FROM Tours
-  `);
+  const total = await db.get<{ count: number }>(countQuery, parameters);
 
   return {
     tours,
     total: total?.count || 0
   };
 };
-
 
 export const getTourById = async(id: string): Promise<TourReturned> => {
   const db = await openDb();
