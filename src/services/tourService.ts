@@ -108,8 +108,8 @@ export const getToursByPage = async (
       Tours.overview,
       Tours.location,
       Tours.ulrImg,
-      GROUP_CONCAT(Types.name) AS types,
-      COUNT(Reviews.id) AS review_count,
+      GROUP_CONCAT(DISTINCT Types.name) AS types,
+      COUNT(DISTINCT Reviews.id) AS review_count,
       AVG(Reviews.average) AS average_review
     FROM 
       Tours
@@ -178,7 +178,6 @@ export const getToursByPage = async (
     total: total?.count || 0
   };
 };
-
 
 export const getTourById = async(id: string): Promise<TourReturned> => {
   const db = await openDb();
