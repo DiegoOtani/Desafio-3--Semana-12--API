@@ -89,6 +89,7 @@ export const getToursByPage = async (
   countryDestinations: string[] = [],
   rating: number = 0,
   search: string,
+  price: number
 ): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
@@ -147,6 +148,11 @@ export const getToursByPage = async (
   if (search) {
     conditions.push(`(Tours.name LIKE ? OR Destinations.city LIKE ?)`);
     parameters.push(`%${search}%`, `%${search}%`);
+  }
+
+  if(price > 0) {
+    conditions.push(`Tours.price_per_person >= ?`);
+    parameters.push(price);
   }
 
   if (conditions.length > 0) {
