@@ -4,6 +4,12 @@
 
 # Travel Agency Backend
 
+<div align="center">
+  <br/>
+  <img src="docs/swagger.png" alt="Swagger page">
+</div>
+
+
 This project is the backend for a travel agency application. It provides APIs for managing tours, destinations, and reviews.
 
 ## Table of Contents
