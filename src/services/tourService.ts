@@ -227,8 +227,8 @@ export const getTourById = async(id: string): Promise<TourReturned> => {
       Tours.location,
       Tours.ulrImg,
       GROUP_CONCAT(DISTINCT Types.name) AS types,
-      COUNT(Reviews.id) AS review_count,
-      AVG(Reviews.average) AS average_review
+      (SELECT COUNT(*) FROM Reviews WHERE Reviews.tour_id = Tours.id) AS review_count,
+      (SELECT AVG(Reviews.average) FROM Reviews WHERE Reviews.tour_id = Tours.id) AS average_review
     FROM 
       Tours
     JOIN 
@@ -239,8 +239,6 @@ export const getTourById = async(id: string): Promise<TourReturned> => {
       TourTypes ON Tours.id = TourTypes.tour_id
     JOIN 
       Types ON TourTypes.type_id = Types.id
-    LEFT JOIN 
-      Reviews ON Tours.id = Reviews.tour_id
     WHERE 
       Tours.id = ?
     GROUP BY 
