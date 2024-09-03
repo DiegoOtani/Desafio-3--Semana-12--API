@@ -78,7 +78,11 @@ export const getTours = async (): Promise<TourReturned[]> => {
     LEFT JOIN 
       Reviews ON Tours.id = Reviews.tour_id
     GROUP BY 
-      Tours.id;
+      Tours.id
+    ORDER BY 
+      Tours.peoples DESC 
+    LIMIT 
+      8; 
   `);
 };
 
