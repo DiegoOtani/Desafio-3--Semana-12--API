@@ -82,11 +82,21 @@ export const getTours = async (): Promise<TourReturned[]> => {
   `);
 };
 
-export const getToursByPage = async(page: number = 1, limit: number = 9): Promise<{ tours: TourReturned[], total: number | undefined }> => {
+export const getToursByPage = async (
+  page: number = 1, 
+  limit: number = 9,
+  categories: string[] = [],
+  countryDestinations: string[] = [],
+  rating: number = 0,
+  search: string,
+  price: number,
+  date: string,
+  sortBy: string = "Title"
+): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
 
-  const tours = await db.all<TourReturned[]>(`
+  let query = `
     SELECT 
       Tours.id AS tour_id,
       Tours.name AS tour_name,
@@ -102,7 +112,117 @@ export const getToursByPage = async(page: number = 1, limit: number = 9): Promis
       Tours.overview,
       Tours.location,
       Tours.ulrImg,
-      GROUP_CONCAT(Types.name) AS types,
+      GROUP_CONCAT(DISTINCT Types.name) AS types,
+      COUNT(DISTINCT Reviews.id) AS review_count,
+      AVG(Reviews.average) AS average_review
+    FROM 
+      Tours
+    JOIN 
+      Destinations ON Tours.city = Destinations.id
+    JOIN 
+      Country ON Destinations.country = Country.id
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    LEFT JOIN 
+      Reviews ON Tours.id = Reviews.tour_id
+  `;
+
+  const conditions: string[] = [];
+  const parameters: any[] = [];
+
+  if (categories.length > 0) {
+    conditions.push(`Types.name IN (${categories.map(() => '?').join(',')})`);
+    parameters.push(...categories);
+  }
+
+  if (countryDestinations.length > 0) {
+    conditions.push(`Country.name IN (${countryDestinations.map(() => '?').join(',')})`);
+    parameters.push(...countryDestinations);
+  }
+
+  if (rating > 0) {
+    conditions.push(`Reviews.average >= ?`);
+    parameters.push(rating);
+  }
+
+  if (search) {
+    conditions.push(`(Tours.name LIKE ? OR Destinations.city LIKE ?)`);
+    parameters.push(`%${search}%`, `%${search}%`);
+  }
+
+  if (price > 0) {
+    conditions.push(`Tours.price_per_person >= ?`);
+    parameters.push(price);
+  }
+
+  if (date) {
+    conditions.push(`Tours.initial_date >= ?`);
+    parameters.push(date);
+  }
+
+  if (conditions.length > 0) {
+    query += ` WHERE ${conditions.join(' AND ')}`;
+  }
+
+  query += ` GROUP BY Tours.id `;
+
+  if (sortBy === "Price") {
+    query += ` ORDER BY Tours.price_per_person ASC`;
+  } else {
+    query += ` ORDER BY Tours.name ASC`;
+  }
+
+  query += ` LIMIT ? OFFSET ?;`;
+
+  const tours = await db.all<TourReturned[]>(query, [...parameters, limit, offset]);
+
+  const countQuery = `
+    SELECT COUNT(DISTINCT Tours.id) AS count
+    FROM 
+      Tours
+    JOIN 
+      Destinations ON Tours.city = Destinations.id
+    JOIN 
+      Country ON Destinations.country = Country.id
+    JOIN 
+      TourTypes ON Tours.id = TourTypes.tour_id
+    JOIN 
+      Types ON TourTypes.type_id = Types.id
+    LEFT JOIN 
+      Reviews ON Tours.id = Reviews.tour_id
+    ${conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''}
+  `;
+
+  const total = await db.get<{ count: number }>(countQuery, parameters);
+
+  return {
+    tours,
+    total: total?.count || 0
+  };
+};
+
+
+export const getTourById = async(id: string): Promise<TourReturned> => {
+  const db = await openDb();
+  const tour = await db.get(`
+    SELECT 
+      Tours.id AS tour_id,
+      Tours.name AS tour_name,
+      Destinations.city AS city,
+      Country.name AS country_name,
+      Tours.initial_date,
+      Tours.end_date,
+      Tours.duration,
+      Tours.price_per_person,
+      Tours.peoples,
+      Tours.max_people,
+      Tours.min_age,
+      Tours.overview,
+      Tours.location,
+      Tours.ulrImg,
+      GROUP_CONCAT(DISTINCT Types.name) AS types,
       COUNT(Reviews.id) AS review_count,
       AVG(Reviews.average) AS average_review
     FROM 
@@ -117,19 +237,12 @@ export const getToursByPage = async(page: number = 1, limit: number = 9): Promis
       Types ON TourTypes.type_id = Types.id
     LEFT JOIN 
       Reviews ON Tours.id = Reviews.tour_id
+    WHERE 
+      Tours.id = ?
     GROUP BY 
-      Tours.id
-    LIMIT ? OFFSET ?;
-  `, [limit, offset]);
-
-  const total = await db.get<{ count: number }>(`
-    SELECT COUNT(*) AS count FROM Tours
-  `);
-
-  return {
-    tours,
-    total: total?.count || 0
-  };
+      Tours.id;
+  `, [id]);
+  return tour || null;
 };
 
 export const updateTourById = async(id: string, updates: Partial<TourType>): Promise<{

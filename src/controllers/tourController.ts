@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createTour, getTours, updateTourById, deleteTourById, getToursByPage } from "../services/tourService";
+import { createTour, getTours, updateTourById, deleteTourById, getToursByPage, getTourById } from "../services/tourService";
 import { v4 as uuidv4 } from 'uuid';
 import { tour, TourType } from "../models/tourModel";
 import { generateCreates, generateUpdates } from "../helpers/crudHelper";
@@ -32,12 +32,33 @@ export const getAllToursByPage = async(req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 9;
-    const {tours, total} = await getToursByPage(page, limit);
+
+    const categories = (req.query.categories as string)?.split(',') || [];
+    const destinations = (req.query.destinations as string)?.split(',') || [];
+    const rating = Number(req.query.rating) || 0;
+    const search = (req.query.search as string) || "";
+    const price = Number(req.query.price) || 0;
+    const date = (req.query.date as string || "");
+    const sortBy = (req.query.sortBy as string) || "Title"; 
+
+    const {tours, total} = await getToursByPage(page, limit, categories, destinations, rating, search, price, date, sortBy);
 
     res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });
   } catch (error) {
-    res.status(500).json({ error: 'Error searchint tours' });
+    res.status(500).json({ error: 'Error searching tours' });
   };
+};
+
+export const findTourById = async(req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tour = await getTourById(id);
+    !tour
+      ? res.status(400).json({ error: 'Tour not found' })
+      : res.status(200).json({ tour });
+  } catch (error) {
+    res.status(500).json({ error: 'Error searching tour.' });
+  }
 };
 
 export const updateTour = async(req: Request, res: Response) => {

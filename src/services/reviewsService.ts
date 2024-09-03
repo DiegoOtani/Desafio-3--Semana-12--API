@@ -14,7 +14,7 @@ export const createReview = async(review: ReviewType): Promise<{ review: ReviewT
   const reviewExists = await reviewExistsById(review.id);
   if(reviewExists) return { review: null, error: 'Review already registered' };
 
-  const tourExists = tourExistsById(review.tour_id);
+  const tourExists = await tourExistsById(review.tour_id);
   if(!tourExists) return { review: null, error: 'Tour not founded' };
 
   const { keys, valuesQuery, values } = getKeysAndValuesToInsert(review);
@@ -37,6 +37,59 @@ export const getReview = async(): Promise<ReviewType[]> => {
   const db = await openDb();
   return db.all(`SELECT * FROM Reviews`);
 };
+
+export const getReviewAveragesByTourId = async (tourId: string) => {
+  const db = await openDb();
+  
+  const tourExists = await tourExistsById(tourId);
+  if(!tourExists) return { review: null, error: 'Tour not founded' };
+
+  const result = await db.get(`
+    SELECT 
+      AVG(services) AS avg_services,
+      AVG(prices) AS avg_prices,
+      AVG(locations) AS avg_locations,
+      AVG(food) AS avg_food,
+      AVG(amenities) AS avg_amenities,
+      AVG(room_comfort_quality) AS avg_room_comfort_quality,
+      AVG(average) AS avg_overall
+    FROM Reviews
+    WHERE tour_id = ?;
+    `,
+    [tourId]
+  );
+
+  return result;
+};
+
+export const getReviewsByTourId = async (tourId: string): Promise<{ reviews: any[] | null, error: string | null }> => {
+  const db = await openDb();
+  
+  const tourExists = await tourExistsById(tourId);
+  if (!tourExists) return { reviews: null, error: 'Tour not found' };
+
+  try {
+    const reviews = await db.all(`
+      SELECT 
+        r.date_review,
+        r.name,
+        r.average AS average_rating,
+        r.comment,
+        (
+          SELECT COUNT(*) 
+          FROM Reviews
+          WHERE user_id = r.user_id
+        ) AS review_count_by_user
+      FROM Reviews r
+      WHERE r.tour_id = ?
+    `, [tourId]);
+
+    return { reviews, error: null };
+  } catch (error) {
+    return { reviews: null, error: 'Error fetching reviews' };
+  }
+};
+
 
 export const updateReviewById = async(id:string,  updates: Partial<ReviewType>): Promise<{
   review: ReviewType | null, error: string | null
