@@ -89,7 +89,8 @@ export const getToursByPage = async (
   countryDestinations: string[] = [],
   rating: number = 0,
   search: string,
-  price: number
+  price: number,
+  date: string
 ): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
@@ -153,6 +154,11 @@ export const getToursByPage = async (
   if(price > 0) {
     conditions.push(`Tours.price_per_person >= ?`);
     parameters.push(price);
+  }
+
+  if (date) {
+    conditions.push(`Tours.initial_date >= ?`);
+    parameters.push(date);
   }
 
   if (conditions.length > 0) {
