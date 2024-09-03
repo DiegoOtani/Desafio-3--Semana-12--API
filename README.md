@@ -25,7 +25,7 @@ This project is the backend for a travel agency application. It provides APIs fo
 To get started, clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/travel-agency-backend.git
+git clone https://github.com/DiegoOtani/Desafio-3--Semana-12--API.git
 cd travel-agency-backend
 npm install
 ```
