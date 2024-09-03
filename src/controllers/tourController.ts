@@ -39,7 +39,9 @@ export const getAllToursByPage = async(req: Request, res: Response) => {
     const search = (req.query.search as string) || "";
     const price = Number(req.query.price) || 0;
     const date = (req.query.date as string || "");
-    const {tours, total} = await getToursByPage(page, limit, categories, destinations, rating, search, price, date);
+    const sortBy = (req.query.sortBy as string) || "Title"; 
+
+    const {tours, total} = await getToursByPage(page, limit, categories, destinations, rating, search, price, date, sortBy);
 
     res.status(200).json({ tours, total, currentPage: page, totalPages: Math.ceil((total || 0) / limit) });
   } catch (error) {

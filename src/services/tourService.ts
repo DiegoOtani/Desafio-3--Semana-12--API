@@ -90,7 +90,8 @@ export const getToursByPage = async (
   rating: number = 0,
   search: string,
   price: number,
-  date: string
+  date: string,
+  sortBy: string = "Title"
 ): Promise<{ tours: TourReturned[], total: number }> => {
   const db = await openDb();
   const offset = (page - 1) * limit;
@@ -151,7 +152,7 @@ export const getToursByPage = async (
     parameters.push(`%${search}%`, `%${search}%`);
   }
 
-  if(price > 0) {
+  if (price > 0) {
     conditions.push(`Tours.price_per_person >= ?`);
     parameters.push(price);
   }
@@ -165,10 +166,15 @@ export const getToursByPage = async (
     query += ` WHERE ${conditions.join(' AND ')}`;
   }
 
-  query += `
-    GROUP BY Tours.id
-    LIMIT ? OFFSET ?;
-  `;
+  query += ` GROUP BY Tours.id `;
+
+  if (sortBy === "Price") {
+    query += ` ORDER BY Tours.price_per_person ASC`;
+  } else {
+    query += ` ORDER BY Tours.name ASC`;
+  }
+
+  query += ` LIMIT ? OFFSET ?;`;
 
   const tours = await db.all<TourReturned[]>(query, [...parameters, limit, offset]);
 
@@ -196,6 +202,7 @@ export const getToursByPage = async (
     total: total?.count || 0
   };
 };
+
 
 export const getTourById = async(id: string): Promise<TourReturned> => {
   const db = await openDb();
