@@ -1,0 +1,3110 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Trisog Travels API",
+    "version": "1.0.0",
+    "description": "This is the API for managing tours, categories, and reviews. It provides endpoints for user authentication, tour management, and retrieving information about destinations and activities."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/api/country": {
+      "get": {
+        "summary": "Get all countries",
+        "description": "Retrieve a list of all countries.",
+        "tags": [
+          "Country"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of countries",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "countries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "d4541ddc-62c7-4645-bc8c-37913964cc0d"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Spain"
+                          },
+                          "continent": {
+                            "type": "string",
+                            "example": "Europe"
+                          },
+                          "urlImg": {
+                            "type": "string",
+                            "format": "uri",
+                            "example": "https://example.com/image.jpg"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error searching countries"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a new country",
+        "description": "Create a new country with the provided details.",
+        "tags": [
+          "Country"
+        ],
+        "requestBody": {
+          "description": "Country object to be created",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "continent",
+                  "urlImg"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Chile"
+                  },
+                  "continent": {
+                    "type": "string",
+                    "example": "American"
+                  },
+                  "urlImg": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://s2-casavogue.glbimg.com/pGduDbiKGCTguNBLTf-ua5lktFA=/0x0:2121x1414/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_d72fd4bf0af74c0c89d27a5a226dbbf8/internal_photos/bs/2023/R/y/EoOHxaQ62cwUyG1EyD9g/06-as-paisagens-naturais-mais-lindas-do-brasil-fernando-de-noronha2-min.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Country created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Chile"
+                        },
+                        "continent": {
+                          "type": "string",
+                          "example": "American"
+                        },
+                        "urlImg": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://s2-casavogue.glbimg.com/pGduDbiKGCTguNBLTf-ua5lktFA=/0x0:2121x1414/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_d72fd4bf0af74c0c89d27a5a226dbbf8/internal_photos/bs/2023/R/y/EoOHxaQ62cwUyG1EyD9g/06-as-paisagens-naturais-mais-lindas-do-brasil-fernando-de-noronha2-min.jpg"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Country registered successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid country data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating country"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/country/cont": {
+      "get": {
+        "summary": "Get all countries by continent",
+        "description": "Retrieve a list of countries grouped by continent.",
+        "tags": [
+          "Country"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of countries grouped by continent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "countries": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "continent": {
+                            "type": "string",
+                            "example": "Europe"
+                          },
+                          "countries": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "string",
+                                  "example": "d4541ddc-62c7-4645-bc8c-37913964cc0d"
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "example": "Spain"
+                                },
+                                "urlImg": {
+                                  "type": "string",
+                                  "format": "uri",
+                                  "example": "https://example.com/image.jpg"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error searching countries by continent"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/country/{id}": {
+      "put": {
+        "summary": "Update an existing country",
+        "description": "Update details of an existing country identified by the provided ID. You can update the country’s name or image URL.",
+        "tags": [
+          "Country"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the country to update",
+            "schema": {
+              "type": "string",
+              "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Country object with fields to be updated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Chile"
+                  },
+                  "urlImg": {
+                    "type": "string",
+                    "format": "uri",
+                    "example": "https://s2-casavogue.glbimg.com/pGduDbiKGCTguNBLTf-ua5lktFA=/0x0:2121x1414/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_d72fd4bf0af74c0c89d27a5a226dbbf8/internal_photos/bs/2023/R/y/EoOHxaQ62cwUyG1EyD9g/06-as-paisagens-naturais-mais-lindas-do-brasil-fernando-de-noronha2-min.jpg"
+                  }
+                },
+                "required": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Country updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "country": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Chile"
+                        },
+                        "continent": {
+                          "type": "string",
+                          "example": "American"
+                        },
+                        "urlImg": {
+                          "type": "string",
+                          "format": "uri",
+                          "example": "https://s2-casavogue.glbimg.com/pGduDbiKGCTguNBLTf-ua5lktFA=/0x0:2121x1414/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_d72fd4bf0af74c0c89d27a5a226dbbf8/internal_photos/bs/2023/R/y/EoOHxaQ62cwUyG1EyD9g/06-as-paisagens-naturais-mais-lindas-do-brasil-fernando-de-noronha2-min.jpg"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Country updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid country data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Country not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Country not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error updating country"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a country",
+        "description": "Delete an existing country identified by the provided ID.",
+        "tags": [
+          "Country"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the country to delete",
+            "schema": {
+              "type": "string",
+              "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Country deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Country deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Country not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Country not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error deleting country"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/destinations": {
+      "get": {
+        "summary": "Retrieve a list of destinations",
+        "description": "Get all the destinations available in the database, including their IDs, countries, and cities.",
+        "tags": [
+          "Destination"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of destinations retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destinations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "2d88c34c-dc4e-40a3-b252-d47ae40848a0"
+                          },
+                          "country": {
+                            "type": "string",
+                            "example": "Espanha2"
+                          },
+                          "city": {
+                            "type": "string",
+                            "example": "Madrid4"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error searching destinations"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new destination",
+        "description": "Creates a new destination in the database with the specified country and city.",
+        "tags": [
+          "Destination"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "country": {
+                    "type": "string",
+                    "description": "ID of the country where the destination is located",
+                    "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "Name of the city",
+                    "example": "Cidade da Holanda"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Destination created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "7dfc7b23-5c2f-4d83-8f5f-2c4e04eb3fc7"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Cidade da Holanda"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Destination created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or error in creating destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Country ID is invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating destination"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/destinations/{id}": {
+      "put": {
+        "summary": "Update an existing destination",
+        "description": "Updates the details of an existing destination by its ID. You can update the country or city fields.",
+        "tags": [
+          "Destination"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the destination to update",
+            "example": "7dfc7b23-5c2f-4d83-8f5f-2c4e04eb3fc7"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "country": {
+                    "type": "string",
+                    "description": "ID of the new country for the destination",
+                    "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "Name of the new city for the destination",
+                    "example": "Nova Cidade"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Destination updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "7dfc7b23-5c2f-4d83-8f5f-2c4e04eb3fc7"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Nova Cidade"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Destination updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input or error in updating destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "No fields provided for update"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Destination not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Destination not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error updating destination"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a destination",
+        "description": "Deletes a destination by its ID.",
+        "tags": [
+          "Destination"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the destination to delete",
+            "example": "7dfc7b23-5c2f-4d83-8f5f-2c4e04eb3fc7"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Destination deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "7dfc7b23-5c2f-4d83-8f5f-2c4e04eb3fc7"
+                        },
+                        "country": {
+                          "type": "string",
+                          "example": "6be763f4-0ca8-49b9-8888-4e1fbde8b062"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Nova Cidade"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Destination deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid ID or error in deleting destination",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Destination ID is invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Destination not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "destination": {
+                      "type": "null"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Destination not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error deleting destination"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews": {
+      "get": {
+        "summary": "Retrieve all reviews",
+        "description": "Retrieve a list of all reviews with detailed information.",
+        "tags": [
+          "Reviews"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reviews": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "johndoe@example.com"
+                          },
+                          "comment": {
+                            "type": "string",
+                            "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                          },
+                          "services": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "locations": {
+                            "type": "integer",
+                            "example": 1
+                          },
+                          "amenities": {
+                            "type": "integer",
+                            "example": 4
+                          },
+                          "prices": {
+                            "type": "integer",
+                            "example": 4
+                          },
+                          "food": {
+                            "type": "integer",
+                            "example": 5
+                          },
+                          "room_comfort_quality": {
+                            "type": "integer",
+                            "example": 4
+                          },
+                          "average": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 4.5
+                          },
+                          "date_review": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-08-23"
+                          },
+                          "user_id": {
+                            "type": "string",
+                            "example": "dfafd"
+                          },
+                          "tour_id": {
+                            "type": "string",
+                            "example": "10416760-046a-4e7a-861e-3b3dca139344"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error retrieving reviews"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new review",
+        "description": "Submit a new review for a tour in the system.",
+        "tags": [
+          "Reviews"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                  },
+                  "services": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "locations": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "amenities": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "prices": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "food": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "room_comfort_quality": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "average": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 1
+                  },
+                  "date_review": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-08-23"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "example": "diegoid"
+                  },
+                  "tour_id": {
+                    "type": "string",
+                    "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "comment",
+                  "services",
+                  "locations",
+                  "amenities",
+                  "prices",
+                  "food",
+                  "room_comfort_quality",
+                  "average",
+                  "date_review",
+                  "user_id",
+                  "tour_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Review created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "johndoe@example.com"
+                        },
+                        "comment": {
+                          "type": "string",
+                          "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                        },
+                        "services": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "locations": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "amenities": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "prices": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "food": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "room_comfort_quality": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "average": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 1
+                        },
+                        "date_review": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-23"
+                        },
+                        "user_id": {
+                          "type": "string",
+                          "example": "diegoid"
+                        },
+                        "tour_id": {
+                          "type": "string",
+                          "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Review created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating review"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/{id}": {
+      "put": {
+        "summary": "Update an existing review",
+        "description": "Update the details of an existing review by its ID.",
+        "tags": [
+          "Reviews"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the review to be updated.",
+            "schema": {
+              "type": "string",
+              "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "johndoe@example.com"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                  },
+                  "services": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "locations": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "amenities": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "prices": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "food": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "room_comfort_quality": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "average": {
+                    "type": "number",
+                    "format": "float",
+                    "example": 1
+                  },
+                  "date_review": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-08-23"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "example": "diegoid"
+                  },
+                  "tour_id": {
+                    "type": "string",
+                    "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "comment",
+                  "services",
+                  "locations",
+                  "amenities",
+                  "prices",
+                  "food",
+                  "room_comfort_quality",
+                  "average",
+                  "date_review",
+                  "user_id",
+                  "tour_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "johndoe@example.com"
+                        },
+                        "comment": {
+                          "type": "string",
+                          "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                        },
+                        "services": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "locations": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "amenities": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "prices": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "food": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "room_comfort_quality": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "average": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 1
+                        },
+                        "date_review": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-23"
+                        },
+                        "user_id": {
+                          "type": "string",
+                          "example": "diegoid"
+                        },
+                        "tour_id": {
+                          "type": "string",
+                          "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Review updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid input data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Review with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error updating review"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an existing review",
+        "description": "Delete a review by its ID.",
+        "tags": [
+          "Reviews"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the review to be deleted.",
+            "schema": {
+              "type": "string",
+              "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Review deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "182aa6ea-bfac-4f26-9a53-48e02a50242c"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "johndoe@example.com"
+                        },
+                        "comment": {
+                          "type": "string",
+                          "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                        },
+                        "services": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "locations": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "amenities": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "prices": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "food": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "room_comfort_quality": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "average": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 1
+                        },
+                        "date_review": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-23"
+                        },
+                        "user_id": {
+                          "type": "string",
+                          "example": "diegoid"
+                        },
+                        "tour_id": {
+                          "type": "string",
+                          "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Review deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Review with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error deleting review"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/avg/{id}": {
+      "get": {
+        "summary": "Retrieve average ratings for a specific tour",
+        "description": "Retrieve average ratings for services, prices, locations, food, amenities, and room comfort quality for a specific tour identified by its ID.",
+        "tags": [
+          "Reviews"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the tour for which to retrieve average ratings.",
+            "schema": {
+              "type": "string",
+              "example": "10416760-046a-4e7a-861e-3b3dca139344"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved average ratings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "review": {
+                      "type": "object",
+                      "properties": {
+                        "avg_services": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 1.4
+                        },
+                        "avg_prices": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 3.8
+                        },
+                        "avg_locations": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 1.2
+                        },
+                        "avg_food": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 4.6
+                        },
+                        "avg_amenities": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 3.8
+                        },
+                        "avg_room_comfort_quality": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 4
+                        },
+                        "avg_overall": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 4.12
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tour not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Tour with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error retrieving average ratings"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/tour/{id}": {
+      "get": {
+        "summary": "Retrieve reviews for a specific tour",
+        "description": "Retrieve all reviews for a specific tour identified by its ID, including details like review date, reviewer's name, average rating, comment, and the count of reviews by the user.",
+        "tags": [
+          "Reviews"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the tour for which to retrieve reviews.",
+            "schema": {
+              "type": "string",
+              "example": "10416760-046a-4e7a-861e-3b3dca139344"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved reviews for the specified tour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reviews": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "date_review": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-08-23"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "John"
+                          },
+                          "average_rating": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 4.5
+                          },
+                          "comment": {
+                            "type": "string",
+                            "example": "Amazing tour! The guide was very knowledgeable, and the locations were breathtaking."
+                          },
+                          "review_count_by_user": {
+                            "type": "integer",
+                            "example": 2
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tour not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Tour with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error retrieving reviews"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tours": {
+      "get": {
+        "summary": "Retrieve all tours",
+        "description": "Retrieve a list of all available tours.",
+        "tags": [
+          "Tours"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of tours",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tours": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tour_id": {
+                            "type": "string",
+                            "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                          },
+                          "tour_name": {
+                            "type": "string",
+                            "example": "Radical Adventure 2"
+                          },
+                          "city": {
+                            "type": "string",
+                            "example": "CP city"
+                          },
+                          "country_name": {
+                            "type": "string",
+                            "example": "Brasil"
+                          },
+                          "initial_date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-09-01"
+                          },
+                          "end_date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-09-07"
+                          },
+                          "duration": {
+                            "type": "integer",
+                            "example": 7
+                          },
+                          "price_per_person": {
+                            "type": "number",
+                            "example": 200
+                          },
+                          "peoples": {
+                            "type": "integer",
+                            "example": 20
+                          },
+                          "max_people": {
+                            "type": "integer",
+                            "example": 25
+                          },
+                          "min_age": {
+                            "type": "integer",
+                            "example": 18
+                          },
+                          "overview": {
+                            "type": "string",
+                            "example": "An exciting adventure in the heart of New York."
+                          },
+                          "location": {
+                            "type": "string",
+                            "example": "Central Park"
+                          },
+                          "ulrImg": {
+                            "type": "string",
+                            "example": "/urlImage"
+                          },
+                          "types": {
+                            "type": "string",
+                            "example": "Radical, Camping"
+                          },
+                          "review_count": {
+                            "type": "integer",
+                            "example": 10
+                          },
+                          "average_review": {
+                            "type": "number",
+                            "example": 1.7
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error searching tours"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a new tour",
+        "description": "Register a new tour with the provided details.",
+        "tags": [
+          "Tours"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Kids Adventure"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "a9e48edb-41e2-4efe-bf17-95e18c35be52"
+                  },
+                  "initial_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-08-01"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-09-07"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "example": 7
+                  },
+                  "price_per_person": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "peoples": {
+                    "type": "integer",
+                    "example": 20
+                  },
+                  "max_people": {
+                    "type": "integer",
+                    "example": 25
+                  },
+                  "min_age": {
+                    "type": "integer",
+                    "example": 18
+                  },
+                  "overview": {
+                    "type": "string",
+                    "example": "An exciting adventure in the heart of New York."
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "-22.9068, -43.1729"
+                  },
+                  "ulrImg": {
+                    "type": "string",
+                    "example": "www.image.com/image"
+                  },
+                  "types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+                    },
+                    "example": [
+                      "66c8ad60-eceb-423b-9961-6913a1e4049f",
+                      "25a68878-3a5e-4bb3-8bf1-f92627818350"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "city",
+                  "initial_date",
+                  "end_date",
+                  "duration",
+                  "price_per_person",
+                  "peoples",
+                  "max_people",
+                  "min_age",
+                  "overview",
+                  "location",
+                  "ulrImg",
+                  "types"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tour registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Kids Adventure"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "a9e48edb-41e2-4efe-bf17-95e18c35be52"
+                        },
+                        "initial_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-01"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-09-07"
+                        },
+                        "duration": {
+                          "type": "integer",
+                          "example": 7
+                        },
+                        "price_per_person": {
+                          "type": "number",
+                          "example": 500
+                        },
+                        "peoples": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "max_people": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "min_age": {
+                          "type": "integer",
+                          "example": 18
+                        },
+                        "overview": {
+                          "type": "string",
+                          "example": "An exciting adventure in the heart of New York."
+                        },
+                        "location": {
+                          "type": "string",
+                          "example": "Central Park"
+                        },
+                        "ulrImg": {
+                          "type": "string",
+                          "example": "www.image.com/image"
+                        },
+                        "types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "66c8ad60-eceb-423b-9961-6913a1e4049f",
+                            "25a68878-3a5e-4bb3-8bf1-f92627818350"
+                          ]
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tour registered successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid tour data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating tour"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tours/{id}": {
+      "put": {
+        "summary": "Update an existing tour",
+        "description": "Update an existing tour with the provided details. Only the fields included in the request will be updated.",
+        "tags": [
+          "Tours"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the tour to update",
+            "schema": {
+              "type": "string",
+              "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Kids Adventure"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "a9e48edb-41e2-4efe-bf17-95e18c35be52"
+                  },
+                  "initial_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-08-01"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date",
+                    "example": "2024-09-07"
+                  },
+                  "duration": {
+                    "type": "integer",
+                    "example": 7
+                  },
+                  "price_per_person": {
+                    "type": "number",
+                    "example": 500
+                  },
+                  "peoples": {
+                    "type": "integer",
+                    "example": 20
+                  },
+                  "max_people": {
+                    "type": "integer",
+                    "example": 25
+                  },
+                  "min_age": {
+                    "type": "integer",
+                    "example": 18
+                  },
+                  "overview": {
+                    "type": "string",
+                    "example": "An exciting adventure in the heart of New York."
+                  },
+                  "location": {
+                    "type": "string",
+                    "example": "Central Park"
+                  },
+                  "ulrImg": {
+                    "type": "string",
+                    "example": "www.image.com/image"
+                  },
+                  "types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+                    },
+                    "example": [
+                      "66c8ad60-eceb-423b-9961-6913a1e4049f",
+                      "25a68878-3a5e-4bb3-8bf1-f92627818350"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tour updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Kids Adventure"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "a9e48edb-41e2-4efe-bf17-95e18c35be52"
+                        },
+                        "initial_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-01"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-09-07"
+                        },
+                        "duration": {
+                          "type": "integer",
+                          "example": 7
+                        },
+                        "price_per_person": {
+                          "type": "number",
+                          "example": 500
+                        },
+                        "peoples": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "max_people": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "min_age": {
+                          "type": "integer",
+                          "example": 18
+                        },
+                        "overview": {
+                          "type": "string",
+                          "example": "An exciting adventure in the heart of New York."
+                        },
+                        "location": {
+                          "type": "string",
+                          "example": "Central Park"
+                        },
+                        "ulrImg": {
+                          "type": "string",
+                          "example": "www.image.com/image"
+                        },
+                        "types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "66c8ad60-eceb-423b-9961-6913a1e4049f",
+                            "25a68878-3a5e-4bb3-8bf1-f92627818350"
+                          ]
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tour updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid tour data"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tour not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Tour not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error updating tour"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a tour",
+        "description": "Delete a specific tour by its ID.",
+        "tags": [
+          "Tours"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the tour to delete",
+            "schema": {
+              "type": "string",
+              "example": "1f40d7f3-5a87-43b1-805b-91f003c2f529"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tour deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Tour deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tour not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Tour not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error deleting tour"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Retrieve a tour by ID",
+        "description": "Retrieve detailed information about a specific tour by its ID.",
+        "tags": [
+          "Tours"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the tour to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "32d2d039-da26-4da4-b0bb-cc45b260c6fd"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Details of the tour",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tour": {
+                      "type": "object",
+                      "properties": {
+                        "tour_id": {
+                          "type": "string",
+                          "example": "32d2d039-da26-4da4-b0bb-cc45b260c6fd"
+                        },
+                        "tour_name": {
+                          "type": "string",
+                          "example": "Kids Adventure"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "CP city"
+                        },
+                        "country_name": {
+                          "type": "string",
+                          "example": "Brasil"
+                        },
+                        "initial_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-08-01"
+                        },
+                        "end_date": {
+                          "type": "string",
+                          "format": "date",
+                          "example": "2024-09-07"
+                        },
+                        "duration": {
+                          "type": "integer",
+                          "example": 7
+                        },
+                        "price_per_person": {
+                          "type": "number",
+                          "format": "float",
+                          "example": 500
+                        },
+                        "peoples": {
+                          "type": "integer",
+                          "example": 20
+                        },
+                        "max_people": {
+                          "type": "integer",
+                          "example": 25
+                        },
+                        "min_age": {
+                          "type": "integer",
+                          "example": 18
+                        },
+                        "overview": {
+                          "type": "string",
+                          "example": "An exciting adventure in the heart of New York."
+                        },
+                        "location": {
+                          "type": "string",
+                          "example": "-22.9068, -43.1729"
+                        },
+                        "ulrImg": {
+                          "type": "string",
+                          "example": "www.image.com/image"
+                        },
+                        "types": {
+                          "type": "string",
+                          "example": "Radical,Camping"
+                        },
+                        "review_count": {
+                          "type": "integer",
+                          "example": 0
+                        },
+                        "average_review": {
+                          "type": "number",
+                          "format": "float",
+                          "nullable": true,
+                          "example": null
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tour not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Tour not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error retrieving tour details"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tours/page": {
+      "get": {
+        "summary": "Retrieve tours by page",
+        "description": "Retrieve a paginated list of tours with optional filters and sorting.",
+        "tags": [
+          "Tours"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to retrieve",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The number of tours per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 10
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "description": "Comma-separated list of categories to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Adventure,Camping"
+            }
+          },
+          {
+            "name": "destinations",
+            "in": "query",
+            "description": "Comma-separated list of destinations to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Brasil"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Minimum rating to filter by",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 4.5
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Search term to filter tours by name or description",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Adventure"
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Minimum price to filter by",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "float",
+              "example": 100
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date to filter tours by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-08-01"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort the tours by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "price"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paginated list of tours",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tours": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "tour_id": {
+                            "type": "string",
+                            "example": "32d2d039-da26-4da4-b0bb-cc45b260c6fd"
+                          },
+                          "tour_name": {
+                            "type": "string",
+                            "example": "Kids Adventure"
+                          },
+                          "city": {
+                            "type": "string",
+                            "example": "CP city"
+                          },
+                          "country_name": {
+                            "type": "string",
+                            "example": "Brasil"
+                          },
+                          "initial_date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-08-01"
+                          },
+                          "end_date": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-09-07"
+                          },
+                          "duration": {
+                            "type": "integer",
+                            "example": 7
+                          },
+                          "price_per_person": {
+                            "type": "number",
+                            "format": "float",
+                            "example": 500
+                          },
+                          "peoples": {
+                            "type": "integer",
+                            "example": 20
+                          },
+                          "max_people": {
+                            "type": "integer",
+                            "example": 25
+                          },
+                          "min_age": {
+                            "type": "integer",
+                            "example": 18
+                          },
+                          "overview": {
+                            "type": "string",
+                            "example": "An exciting adventure in the heart of New York."
+                          },
+                          "location": {
+                            "type": "string",
+                            "example": "Central Park"
+                          },
+                          "ulrImg": {
+                            "type": "string",
+                            "example": "www.image.com/image"
+                          },
+                          "types": {
+                            "type": "string",
+                            "example": "Camping"
+                          },
+                          "review_count": {
+                            "type": "integer",
+                            "example": 0
+                          },
+                          "average_review": {
+                            "type": "number",
+                            "format": "float",
+                            "nullable": true,
+                            "example": null
+                          }
+                        }
+                      }
+                    },
+                    "total": {
+                      "type": "integer",
+                      "example": 100
+                    },
+                    "currentPage": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error retrieving tours"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/types": {
+      "get": {
+        "summary": "Retrieve all types",
+        "description": "Retrieve a list of all types of tours.",
+        "tags": [
+          "Types"
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of types",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "types": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type_id": {
+                            "type": "string",
+                            "example": "223d4023-070f-42dd-b09f-9ae7f834a021"
+                          },
+                          "type_name": {
+                            "type": "string",
+                            "example": "Adventure"
+                          },
+                          "tour_count": {
+                            "type": "integer",
+                            "example": 19
+                          },
+                          "min_price": {
+                            "type": "number",
+                            "nullable": true,
+                            "example": 200
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error searching type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Register a new type",
+        "description": "Register a new type of tour in the system.",
+        "tags": [
+          "Types"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Camping"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Type registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Camping"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Type registered successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Type with the same name already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error creating type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/types/{id}": {
+      "put": {
+        "summary": "Update an existing type",
+        "description": "Update the details of an existing type by its ID.",
+        "tags": [
+          "Types"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the type to be updated.",
+            "schema": {
+              "type": "string",
+              "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Camping"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Type updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Camping"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Type updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Type with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error updating type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete an existing type",
+        "description": "Delete a type by its ID.",
+        "tags": [
+          "Types"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the type to be deleted.",
+            "schema": {
+              "type": "string",
+              "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Type deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "66c8ad60-eceb-423b-9961-6913a1e4049f"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Camping"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Type deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, type not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": null
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "Type with the given ID not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Error deleting type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": [
+    {
+      "name": "Country",
+      "description": "Routes for countries manipulation"
+    },
+    {
+      "name": "Destination",
+      "description": "Routes for destination manipulation"
+    },
+    {
+      "name": "Reviews",
+      "description": "Routes for reviews manipulation"
+    },
+    {
+      "name": "Tours",
+      "description": "Routes for tour manipulation"
+    },
+    {
+      "name": "Types",
+      "description": "Routes for type manipulation"
+    }
+  ]
+}
