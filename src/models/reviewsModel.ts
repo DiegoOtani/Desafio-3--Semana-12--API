@@ -11,6 +11,7 @@ export type ReviewType = {
   room_comfort_quality: number;
   average: number;
   date_review: string;
+  user_id: string,
   tour_id: string;
 };
 
@@ -27,5 +28,6 @@ export const review: ReviewType = {
   room_comfort_quality: 0,
   average: 0,
   date_review: "",
+  user_id: "",
   tour_id: "",
 };

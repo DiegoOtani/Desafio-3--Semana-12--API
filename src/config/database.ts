@@ -64,6 +64,7 @@ export async function setupDatabase() {
       FOREIGN KEY (type_id) REFERENCES Types(id) ON DELETE CASCADE
     )  
   `);
+  
 
   await db.exec(`
     CREATE TABLE IF NOT EXISTS Reviews (
@@ -79,8 +80,9 @@ export async function setupDatabase() {
       room_comfort_quality INTEGER NOT NULL CHECK (room_comfort_quality >= 1 AND room_comfort_quality <= 5),
       average REAL NOT NULL CHECK (average >= 1 AND average <= 5),
       date_review DATE NOT NULL,
+      user_id TEXT NOT NULL,
       tour_id TEXT NOT NULL,
       FOREIGN KEY (tour_id) REFERENCES Tours(id) ON DELETE CASCADE
     )
   `);
-}
+};
