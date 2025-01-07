@@ -1,10 +1,19 @@
 import app from "./config/app";
 import { setupDatabase } from "./config/database";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
-const PORT = 3000;
+let isDatabaseConnected = false;
 
-setupDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  })
-})
+export default async (req: VercelRequest, res: VercelResponse) => {
+  try {
+    if (!isDatabaseConnected) {
+      await setupDatabase();
+      isDatabaseConnected = true;
+    }
+
+    app(req, res);
+  } catch (error) {
+    console.error("Error setting up the server:", error);
+    res.status(500).send("Internal server error");
+  }
+};
